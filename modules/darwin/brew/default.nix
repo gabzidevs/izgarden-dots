@@ -71,7 +71,7 @@
       taps = builtins.attrNames config.nix-homebrew.taps;
 
       # `brew install`
-      brews = [ "openjdk" ];
+      # brews = [ "openjdk" ];
 
       # `brew install --cask`
       casks = [
@@ -80,7 +80,12 @@
         "tidal" # music player
         "raycast" # app launcher, and clipboard manager
         # "inkscape" # vector graphics editor
-        "intellij-idea" # IDE
+        # {
+        #   name = "youtube-music";
+        #   args.require_sha = false; # youtube music client
+        #   greedy = true; # ytm is not properly versioned
+        # }
+        # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
       ];
     };

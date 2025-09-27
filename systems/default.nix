@@ -13,52 +13,11 @@
       ];
     };
 
-    # This is the list of system configuration
-    #
-    # the defaults consists of the following:
-    #  arch = "x86_64";
-    #  class = "nixos";
-    #  modules = [ ];
-    #  specialArgs = { };
     hosts = {
-      # isabel's hosts
       # keep-sorted start block=yes newline_separated=yes
-      amaterasu = { };
-
-      aphrodite = { };
-
-      athena = { };
-
-      hephaestus = { };
-
-      isis = { };
-
-      lilith = {
-        class = "iso";
-      };
-
-      minerva = { };
-
-      skadi = {
-        arch = "aarch64";
-      };
-
-      tatsumaki = {
+      spacehound = {
         arch = "aarch64";
         class = "darwin";
-      };
-
-      valkyrie = {
-        class = "wsl";
-      };
-      # keep-sorted end
-
-      # robin's hosts
-      # keep-sorted start block=yes newline_separated=yes
-      bmo = { };
-
-      wisp = {
-        class = "wsl";
       };
       # keep-sorted end
     };

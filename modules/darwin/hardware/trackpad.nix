@@ -10,7 +10,7 @@
       # enable two finger right click
       TrackpadRightClick = true;
 
-      # enable three finger drag, disabled so I can swap workspaces with 3 fingers
+      # NOTE: disabled so I can swap workspaces with 3 fingers
       TrackpadThreeFingerDrag = false;
     };
   };

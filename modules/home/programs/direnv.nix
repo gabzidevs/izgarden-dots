@@ -1,6 +1,7 @@
 { pkgs, config, ... }:
 {
   programs.direnv = {
+    # NOTE: Might have to disable this since I'd be using `mise` instead
     inherit (config.garden.profiles.workstation) enable;
     silent = true;
 

@@ -1,7 +1,7 @@
 {
   imports = [
     # keep-sorted start
-    ./isabel.nix
+    ./gabz.nix
     ./mkuser.nix
     ./options.nix
     # keep-sorted end

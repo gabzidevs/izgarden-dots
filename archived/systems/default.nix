@@ -9,6 +9,7 @@
 
     perClass = class: {
       modules = [
+        # import the class module, this contains the common configurations between all systems of the same class
         "${self}/modules/${class}/default.nix"
       ];
     };
@@ -28,10 +29,6 @@
       aphrodite = { };
 
       athena = { };
-
-      hephaestus = { };
-
-      isis = { };
 
       lilith = {
         class = "iso";

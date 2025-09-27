@@ -77,21 +77,21 @@
       taps = builtins.attrNames config.nix-homebrew.taps;
 
       # `brew install`
-      brews = [ "openjdk" ];
+      # brews = [ "openjdk" ];
 
       # `brew install --cask`
       casks = [
         "arc" # browser
         # "loungy" # app launcher, too beta to use mainstream
-        "gimp" # image editor
+        # "gimp" # image editor
         "raycast" # app launcher, and clipboard manager
         # "inkscape" # vector graphics editor
-        {
-          name = "youtube-music";
-          args.require_sha = false; # youtube music client
-          greedy = true; # ytm is not properly versioned
-        }
-        "intellij-idea" # IDE
+        # {
+        #   name = "youtube-music";
+        #   args.require_sha = false; # youtube music client
+        #   greedy = true; # ytm is not properly versioned
+        # }
+        # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
       ];
     };

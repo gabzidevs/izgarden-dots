@@ -19,6 +19,9 @@
             pkgs.sops # secrets management
             config.formatter # nix formatter
             pkgs.nix-output-monitor # get clean diff between generations
+            # INFO: Just because
+            pkgs.mise
+            pkgs.fish
           ];
 
           inputsFrom = [ config.formatter ];

@@ -1,7 +1,7 @@
 {
   system.defaults = {
     # use 12 hour time
-    NSGlobalDomain.AppleICUForce24HourTime = false;
+    # NSGlobalDomain.AppleICUForce24HourTime = false;
 
     menuExtraClock = {
       # show 12 hour clock
@@ -11,7 +11,7 @@
       IsAnalog = false;
 
       # show AM/PM
-      ShowAMPM = true;
+      ShowAMPM = false;
 
       # Show date can imply the result of ShowDayOfMonth, ShowDayOfWeek, and ShowSeconds.
       # 0 = Show the date 1 = Don’t show 2 = Don’t show (hides date)
@@ -21,10 +21,10 @@
       # ShowDayOfMonth = false;
 
       # show day of week
-      # ShowDayOfWeek = false;
+      ShowDayOfWeek = true;
 
       # show seconds
-      # ShowSeconds = false;
+      ShowSeconds = true;
     };
   };
 }

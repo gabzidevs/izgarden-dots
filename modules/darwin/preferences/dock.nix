@@ -13,7 +13,7 @@
       orientation = "bottom";
 
       # dock icon size
-      tilesize = 30;
+      tilesize = 50;
 
       # show running apps
       static-only = false;

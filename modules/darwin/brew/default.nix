@@ -1,9 +1,16 @@
 {
+  self,
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }:
+let
+  inherit (self.lib) anyHome;
+
+  qh = anyHome config;
+in
 {
   imports = [
     inputs.homebrew.darwinModules.nix-homebrew
@@ -38,6 +45,12 @@
           rev = "aa17e4abe6611675e735d79afa6267c20af2386b";
           hash = "sha256-L5lQUd4RF9TXDRLM72uPQlsaXSMIwaLAF+xrxKDriBU=";
         };
+        # "th-ch/homebrew-youtube-music" = pkgs.fetchFromGitHub {
+        #   owner = "th-ch";
+        #   repo = "homebrew-youtube-music";
+        #   rev = "b87d9c3dfa2ec58c182b6bfda182ccbdc58beb5c";
+        #   hash = "sha256-7rcUremYRB9JsqaY6SyRfXk1GnrTfyJjYUi0fDiI5Sk=";
+        # };
       };
     };
 
@@ -87,6 +100,9 @@
         # }
         # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
+      ]
+      ++ lib.optionals (qh (c: c.programs.ghostty.enable)) [
+        "ghostty"
       ];
     };
   };

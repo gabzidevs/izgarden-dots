@@ -9,7 +9,7 @@ in
     enable = true;
     enableDefaultConfig = false;
 
-    # includes = [ secrets.uni-sshconf.path ];
+     # includes = [ secrets.extra-sshconf.path ];
 
     matchBlocks = {
       "*" = {
@@ -26,42 +26,12 @@ in
       };
 
       # keep-sorted start block=yes newline_separated=yes
-      # "amity" = {
-      #   hostname = "143.47.240.116";
-      #   identityFile = secrets.keys-amity.path;
-      # };
-      #
-      # "aphrodite".hostname = "95.111.208.153";
-      #
-      # "athena".hostname = "192.168.86.3";
-      #
-      # "aur.archlinux.org" = {
-      #   user = "aur";
-      #   hostname = "aur.archlinux.org";
-      #   identityFile = secrets.keys-aur.path;
-      # };
-      #
-      # "codeberg.org" = {
-      #   user = "git";
-      #   hostname = "codeberg.org";
-      #   identityFile = secrets.keys-codeberg.path;
-      # };
-      #
-      # "git.auxolotl.org" = {
-      #   user = "forgejo";
-      #   hostname = "git.auxolotl.org";
-      # };
-      #
-      # "git.isabelroses.com" = {
-      #   user = "git";
-      #   hostname = "git.isabelroses.com";
-      #   port = 2222;
-      # };
-
        "github.com" = {
-         user = "git";
-         hostname = "github.com";
-         identityFile = secrets.keys-gh.path;
+          user = "git";
+          hostname = "github.com";
+          identityFile = secrets.keys-gh.path;
+          forwardAgent = true;
+          addKeysToAgent = "yes";
        };
 
        "gitlab.com" = {
@@ -69,45 +39,18 @@ in
          hostname = "gitlab.com";
        };
 
-      # "minerva".hostname = "91.107.198.173";
-      #
-      # "openvpn" = {
-      #   hostname = "132.145.55.42";
-      #   user = "openvpnas";
-      #   identityFile = secrets.keys-openvpn.path;
-      # };
-      #
-      # "skadi".hostname = "141.147.73.185";
-      #
-      # "tangled.org" = {
-      #   user = "git";
-      #   hostname = "tangled.org";
-      #   identityFile = secrets.keys-tangled.path;
-      # };
-      #
-      # "tatsumaki".hostname = "192.168.1.217";
       # keep-sorted end
     };
   };
 
-  # home.file.".ssh/id_ed25519.pub".text = ''
-  #   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQDiHbMSinj8twL9cTgPOfI6OMexrTZyHX27T8gnMj2
-  # '';
+  home.file.".ssh/id_ed25519.pub".text = ''
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIACHj1HRTKsmOT+06X5gC32ASo+8xUkt19X4nE5P5h41
+  '';
 
   sops.secrets = {
     # keep-sorted start block=yes
-    # keys-amity = { };
-    # keys-aur = { };
-    # keys-aur-pub = { };
-    # keys-codeberg = { };
-    # keys-codeberg-pub = { };
-    # keys-gh = { };
-    # keys-gh-pub = { };
-    # keys-openvpn = { };
-    # keys-tangled = { };
-    # keys-tangled-pub = { };
-    # uni-central.path = sshDir + "/uni-central";
-    # uni-sshconf = { };
+    keys-gh.path = sshDir + "/id_ed25519_gh";
+    keys-gh-pub.path = sshDir + "/id_ed25519_gh.pub";
     # keep-sorted end
   };
 }

@@ -4,7 +4,8 @@
     # ./izrss.nix
     ./lazygit.nix
     # ./navi.nix
-    ./neovim.nix
+    # ./neovim.nix
+    ./zellij.nix
     # keep-sorted end
   ];
 }

@@ -8,6 +8,6 @@ in
     #   path = configHome + "/wakatime/.wakatime.cfg";
     # };
 
-    nix-auth-tokens = { };
+    # nix-auth-tokens = { };
   };
 }

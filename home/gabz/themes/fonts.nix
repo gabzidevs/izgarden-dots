@@ -1,6 +1,6 @@
 {
   garden.style.fonts = {
-    name = "Berkeley Mono";
+    name = "Berkely Mono";
     package = null;
   };
 }

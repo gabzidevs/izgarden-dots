@@ -4,3 +4,4 @@
 # Ignore nixos build outputs
 result*
 .direnv/
+.soft-serve

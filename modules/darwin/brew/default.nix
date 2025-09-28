@@ -1,9 +1,16 @@
 {
+  self,
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }:
+let
+  inherit (self.lib) anyHome;
+
+  qh = anyHome config;
+in
 {
   imports = [
     inputs.homebrew.darwinModules.nix-homebrew
@@ -29,21 +36,21 @@
         "homebrew/homebrew-core" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-core";
-          rev = "ad2eada2b64f3f8aefd568875807bd8c03598025";
-          hash = "sha256-HUqUEb7xOkxraiP28ZKsPWutqKF21mZASaX/QDS5mTU=";
+          rev = "ff07fffc3070dd370bd6c9cc5c1eb6bc860f2e23";
+          hash = "sha256-9tbsCAzOHuGhqSgGCr9yNhbQB3hEPhGy6DjQyAT6qg0=";
         };
         "homebrew/homebrew-cask" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-cask";
-          rev = "648ed5aa56f4a4bb552e1d4cfdd9d82e6d27025b";
-          hash = "sha256-UjJZVqGpvQJ6AJ41ExFi02qps5A9sAmuDaJU0e+x1hU=";
+          rev = "bade13641cb4435785cf4a353a33eb920e1289da";
+          hash = "sha256-rFVldUOu1C/pfQM7uvGk65um+7kMEKOOSHG2BY/YZA0=";
         };
-        "th-ch/homebrew-youtube-music" = pkgs.fetchFromGitHub {
-          owner = "th-ch";
-          repo = "homebrew-youtube-music";
-          rev = "b87d9c3dfa2ec58c182b6bfda182ccbdc58beb5c";
-          hash = "sha256-7rcUremYRB9JsqaY6SyRfXk1GnrTfyJjYUi0fDiI5Sk=";
-        };
+        # "th-ch/homebrew-youtube-music" = pkgs.fetchFromGitHub {
+        #   owner = "th-ch";
+        #   repo = "homebrew-youtube-music";
+        #   rev = "b87d9c3dfa2ec58c182b6bfda182ccbdc58beb5c";
+        #   hash = "sha256-7rcUremYRB9JsqaY6SyRfXk1GnrTfyJjYUi0fDiI5Sk=";
+        # };
       };
     };
 
@@ -93,6 +100,9 @@
         # }
         # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
+      ]
+      ++ lib.optionals (qh (c: c.programs.ghostty.enable)) [
+        "ghostty"
       ];
     };
   };

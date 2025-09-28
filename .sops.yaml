@@ -1,22 +1,18 @@
 keys:
-  - &isabel ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQDiHbMSinj8twL9cTgPOfI6OMexrTZyHX27T8gnMj2
+  - &g age15e8xkkpw38y4mzfddkmpdhnt0xna4phypmfaed9x3ewxvl8td44s0gm77l
+  - &gabz age15jcxjp49wajm27g9usseqz5cv5kj4ccp4n3e5ukzcyvf0fvuyyustngtpp
 
-  - &minerva ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAomF8O3ZqZBpLRlAkS1+FwRllSMrREHtndw07trrfcA
-  - &skadi ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKV3N2r1cX3kZMHxuJYaFsjWJRtik/2b/KZ5ru38IqAT
-  - &athena age1dfcv3m85krzqya9tsft5hwrapl3zq35ry6zrt8gy92afcyrrau6q879rfc
-  - &aphrodite ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICOXg0Qq1bdnrYp+KL6tfLZsMf3KHFfpaP2GMjwmpug2
+  # - &spacehound age172mwycpc633cguh9e0x0s9ytjm7u9eps69ec83u9shhs3rw83uss27fnzn
 
 creation_rules:
-  - path_regex: secrets/isabel\.yaml
+  - path_regex: secrets/gabz\.yaml
     key_groups:
       - age:
-        - *isabel
+          - *g
+          - *gabz
 
   - path_regex: secrets/services/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
-        - *isabel
-        - *minerva
-        - *skadi
-        - *athena
-        - *aphrodite
+          - *g
+          - *gabz

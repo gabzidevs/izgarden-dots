@@ -1,6 +1,6 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 let
-  inherit (lib) optionalString;
+  inherit (lib) optionalString getExe;
 in
 {
   programs.fish = {
@@ -19,6 +19,26 @@ in
           echo "Invalid input format. Please use '<number>' to go back a specific number of directories."
         end
       '';
+      __zoxide_zi = ''
+        zoxide query --interactive | read -l result
+        if test -n "$result"
+            cd $result
+        end
+      '';
+      take = ''
+        if test (count $argv) -gt 0
+            set -l path $argv[1]
+            # Create directory if it does not exist
+            mkdir -p $path
+            # Change into the new directory using zoxide
+            cd $path
+        else
+            # If no arguments, use zoxide's interactive mode (zi)
+            # to jump to a recently visited directory
+            # __zoxide_zi
+            cdi
+        end
+      '';
     };
 
     loginShellInit = optionalString pkgs.stdenv.hostPlatform.isDarwin ''
@@ -32,6 +52,12 @@ in
       set -g theme_display_date no
       set -g theme_nerd_fonts yes
       set -g theme_newline_cursor yes
+
+      ${getExe config.programs.mise.package} activate fish --shims | source
+    '';
+
+    shellInitLast = ''
+      ${getExe config.programs.zellij.package} setup --generate-auto-start fish | source
     '';
   };
 }

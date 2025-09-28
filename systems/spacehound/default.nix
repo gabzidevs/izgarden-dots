@@ -1,5 +1,5 @@
 {
-  imports = [ ./users.nix ];
+  imports = [ ./users.nix ./apps.nix ];
 
   garden = {
     profiles = {

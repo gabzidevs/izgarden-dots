@@ -33,23 +33,40 @@ in
       };
     })
 
+    (mkIf config.garden.profiles.workstation.git.fsck.enable {
+      programs.git.extraConfig = {
+        # prevent data corruption
+        transfer.fsckObjects = true;
+        fetch.fsckObjects = true;
+        receive.fsckObjects = true;
+      };
+    })
+
+
     {
-      sops.secrets.uni-gitconf = { };
+      sops.secrets.dev-gitconf = { };
 
       programs.git = {
         package = pkgs.gitMinimal;
-        userName = "isabel";
-        userEmail = "isabel" + "@" + "isabelroses" + "." + "com"; # obsfuscate email to prevent webscrapper spam
+        userName = "gabz";
+        userEmail = "gabz" + "@" + "spacehound"; # obsfuscated
 
         includes = [
           {
-            condition = "gitdir:~/dev/uni/";
-            inherit (config.sops.secrets."uni-gitconf") path;
+            condition = "gitdir:~/dev/";
+            inherit (config.sops.secrets."dev-gitconf") path;
           }
+
+          # {
+          #   condition = "gitdir:~/.gzw/";
+          #   inherit (config.sops.secrets."dev-gitconf") path;
+          # }
+
           {
-            condition = "gitdir:~/Dev/uni/";
-            inherit (config.sops.secrets."uni-gitconf") path;
+            condition = "gitdir:~/.config/flake/";
+            inherit (config.sops.secrets."dev-gitconf") path;
           }
+
         ];
 
         lfs = {
@@ -187,11 +204,6 @@ in
             autoupdate = true;
           };
 
-          # prevent data corruption
-          transfer.fsckObjects = true;
-          fetch.fsckObjects = true;
-          receive.fsckObjects = true;
-
           url = mkMerge (
             map giturl [
               {
@@ -202,29 +214,12 @@ in
                 domain = "gitlab.com";
                 alias = "gitlab";
               }
-              {
-                domain = "aur.archlinux.org";
-                alias = "aur";
-                user = "aur";
-              }
-              {
-                domain = "git.sr.ht";
-                alias = "srht";
-              }
-              {
-                domain = "codeberg.org";
-                alias = "codeberg";
-              }
-              {
-                domain = "git.isabelroses.com";
-                alias = "me";
-                port = 2222;
-              }
-              {
-                domain = "git.auxolotl.org";
-                alias = "aux";
-                user = "forgejo";
-              }
+              # {
+              #   domain = "git.domain.org";
+              #   alias = "g";
+              #   user = "forgejo";
+              #   port = 2222;
+              # }
             ]
           );
         };

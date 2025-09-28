@@ -13,16 +13,35 @@
 
           DIRENV_LOG_FORMAT = "";
 
-          packages = [
-            pkgs.just # quick and easy task runner
-            pkgs.gitMinimal # we need git
-            pkgs.sops # secrets management
-            config.formatter # nix formatter
-            pkgs.nix-output-monitor # get clean diff between generations
-            # INFO: Just because
-            pkgs.mise
-            pkgs.fish
-          ];
+          packages = builtins.attrValues {
+            inherit (pkgs)
+              just # quick and easy task runner
+              gitMinimal # we need git
+              sops # secrets management
+              nix-output-monitor # get clean diff between generations
+
+              # INFO: Secrets management (extended)
+              ssh-to-age
+              age
+
+              # INFO: Sane terminal tools
+              fish
+              # neovim
+              ripgrep
+              fd
+              eza
+
+              # INFO: Just beacause
+              mise
+              lazygit
+              croc
+              nix-prefetch-github
+            ;
+
+            inherit (config)
+              formatter # nix formatter
+            ;
+          };
 
           inputsFrom = [ config.formatter ];
         };

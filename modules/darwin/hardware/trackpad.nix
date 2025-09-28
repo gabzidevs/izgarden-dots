@@ -1,7 +1,7 @@
 {
   system.defaults = {
     # enable natural scrolling
-    NSGlobalDomain."com.apple.swipescrolldirection" = false;
+    NSGlobalDomain."com.apple.swipescrolldirection" = true;
 
     trackpad = {
       # enable tap to click

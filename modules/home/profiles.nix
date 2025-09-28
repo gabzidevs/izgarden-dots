@@ -11,6 +11,15 @@ in
       laptop
       ;
 
+    # workstation = { 
+    #   inherit (cfg.workstation) enable; 
+    #   git = {
+    #     fsck = lib.mkEnableOption "Git FSCK flags" // {
+    #       enable = lib.mkDefault true;
+    #     };
+    #   };
+    # };
+
     # we don't inherit these as there is extra options here
     gaming = { inherit (cfg.gaming) enable; };
 

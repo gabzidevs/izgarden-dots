@@ -1,6 +1,6 @@
 { lib, config, ... }:
 let
-  inherit (lib) mkOrder;
+  inherit (lib) mkOrder getExe;
 in
 {
   programs.zsh = {
@@ -15,6 +15,8 @@ in
         print -Pn "\e]0;$(pwd)\a"
       }
       precmd_functions+=title_precmd_hook
+
+      eval "$(${getExe config.programs.mise.package} activate zsh --shims)"
     '';
   };
 }

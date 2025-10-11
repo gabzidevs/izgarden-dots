@@ -53,7 +53,7 @@ in
       set -g theme_nerd_fonts yes
       set -g theme_newline_cursor yes
 
-      ${getExe config.programs.mise.package} activate fish --shims | source
+      # ${getExe config.programs.mise.package} activate fish --shims | source
     '';
 
     shellInitLast = ''

@@ -8,8 +8,15 @@ in
     # enable = false;
 
     enableFishIntegration = true;
+    enableZshIntegration = true;
 
     settings = {
+      session_name = "gzw~";
+      attach_to_session = true;
+      on_force_close = "quit";
+      default_mode = "locked";
+      default_shell = getExe config.programs.fish.package;
+
       keybinds._props.clear-defaults = true;
       keybinds._children = [
         {
@@ -1301,12 +1308,6 @@ in
             }];
         }
       ];
-
-      session_name = "gzw~";
-      attach_to_session = true;
-      on_force_close = "quit";
-      default_mode = "locked";
-      default_shell = getExe config.programs.fish.package;
     };
   };
 }

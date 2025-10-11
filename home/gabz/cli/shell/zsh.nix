@@ -16,7 +16,7 @@ in
       }
       precmd_functions+=title_precmd_hook
 
-      eval "$(${getExe config.programs.mise.package} activate zsh --shims)"
+      # eval "$(${getExe config.programs.mise.package} activate zsh --shims)"
     '';
   };
 }

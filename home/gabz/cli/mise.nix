@@ -11,8 +11,9 @@
       tools = {
         node = "lts/jod";
         # node = "lts/iron";
-        bitwarden = "2025.9.0";
+        bitwarden = "2025.10.0";
         neovim = "0.11.4";
+        glab = "1.74.0";
       };
 
       env = {

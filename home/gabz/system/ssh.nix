@@ -35,10 +35,12 @@ in
        };
 
        "gitlab.com" = {
-         user = "git";
-         hostname = "gitlab.com";
-       };
-
+          user = "git";
+          hostname = "gitlab.com";
+          identityFile = secrets.keys-glab.path;
+          forwardAgent = true;
+          addKeysToAgent = "yes";
+      };
       # keep-sorted end
     };
   };
@@ -51,6 +53,8 @@ in
     # keep-sorted start block=yes
     keys-gh.path = sshDir + "/id_ed25519_gh";
     keys-gh-pub.path = sshDir + "/id_ed25519_gh.pub";
+    keys-glab.path = sshDir + "/id_ed25519_glab";
+    keys-glab-pub.path = sshDir + "/id_ed25519_glab.pub";#
     # keep-sorted end
   };
 }

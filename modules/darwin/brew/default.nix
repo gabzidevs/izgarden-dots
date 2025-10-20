@@ -84,7 +84,9 @@ in
       taps = builtins.attrNames config.nix-homebrew.taps;
 
       # `brew install`
-      # brews = [ "openjdk" ];
+      brews = [
+        # "openjdk"
+      ];
 
       # `brew install --cask`
       casks = [
@@ -100,6 +102,7 @@ in
         # }
         # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
+        "protonvpn"
       ]
       ++ lib.optionals (qh (c: c.programs.ghostty.enable)) [
         "ghostty"

@@ -16,6 +16,8 @@ in
       on_force_close = "quit";
       default_mode = "locked";
       default_shell = getExe config.programs.fish.package;
+      # scrollback-editor = getExe config.programs.neovim.package;
+      scrollback-editor = "${getExe config.programs.mise.package} x neovim@latest -- nvim";
 
       keybinds._props.clear-defaults = true;
       keybinds._children = [
@@ -80,7 +82,8 @@ in
                   { SwitchToMode = "renamepane"; PaneNameInput = 0; }
                 ];
               };
-            }{
+            }
+            {
               bind = {
                 _args = ["d"];
                 _children = [
@@ -88,7 +91,8 @@ in
                   { NewPane = "down"; }
                 ];
               };
-            }{
+            }
+            {
               bind = {
                 _args = ["e"];
                 _children = [
@@ -100,8 +104,8 @@ in
               bind = {
                 _args = ["f"];
                 _children = [
-                  { SwitchToMode = "locked"; }
                   { ToggleFocusFullscreen = {}; }
+                  { SwitchToMode = "locked"; }
                 ];
               };
             }
@@ -657,8 +661,8 @@ in
                 _args = ["e"];
                 _children = [
                   {
-                    SwitchToMode = "locked";
                     EditScrollback = {};
+                    SwitchToMode = "locked";
                   }
                 ];
               };

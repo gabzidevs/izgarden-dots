@@ -36,14 +36,14 @@ in
         "homebrew/homebrew-core" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-core";
-          rev = "ff07fffc3070dd370bd6c9cc5c1eb6bc860f2e23";
-          hash = "sha256-9tbsCAzOHuGhqSgGCr9yNhbQB3hEPhGy6DjQyAT6qg0=";
+          rev = "c72546383ad1e5bc5d046d2c80b5149913a0233e";
+          hash = "sha256-FRx3sc5EQ8a0cd8yDQAxlKCN0oF2f+xNDpnMoiANVg0=";
         };
         "homebrew/homebrew-cask" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-cask";
-          rev = "bade13641cb4435785cf4a353a33eb920e1289da";
-          hash = "sha256-rFVldUOu1C/pfQM7uvGk65um+7kMEKOOSHG2BY/YZA0=";
+          rev = "152133e8c694d70a5ed4342a0e2f60b32f2bb17b";
+          hash = "sha256-3N0K70DkL7YZeXHQ/jwLZ28sB1xPz0cT7i3fw2GQZw0=";
         };
         # "th-ch/homebrew-youtube-music" = pkgs.fetchFromGitHub {
         #   owner = "th-ch";
@@ -84,7 +84,9 @@ in
       taps = builtins.attrNames config.nix-homebrew.taps;
 
       # `brew install`
-      # brews = [ "openjdk" ];
+      brews = [
+        # "openjdk"
+      ];
 
       # `brew install --cask`
       casks = [
@@ -100,6 +102,7 @@ in
         # }
         # "intellij-idea" # IDE
         "jordanbaird-ice" # better status bar
+        "protonvpn"
       ]
       ++ lib.optionals (qh (c: c.programs.ghostty.enable)) [
         "ghostty"

@@ -9,7 +9,7 @@ in
     enable = true;
     enableDefaultConfig = false;
 
-     # includes = [ secrets.extra-sshconf.path ];
+    # includes = [ secrets.extra-sshconf.path ];
 
     matchBlocks = {
       "*" = {
@@ -26,20 +26,20 @@ in
       };
 
       # keep-sorted start block=yes newline_separated=yes
-       "github.com" = {
-          user = "git";
-          hostname = "github.com";
-          identityFile = secrets.keys-gh.path;
-          forwardAgent = true;
-          addKeysToAgent = "yes";
-       };
+      "github.com" = {
+        user = "git";
+        hostname = "github.com";
+        identityFile = secrets.keys-gh.path;
+        forwardAgent = true;
+        addKeysToAgent = "yes";
+      };
 
-       "gitlab.com" = {
-          user = "git";
-          hostname = "gitlab.com";
-          identityFile = secrets.keys-glab.path;
-          forwardAgent = true;
-          addKeysToAgent = "yes";
+      "gitlab.com" = {
+        user = "git";
+        hostname = "gitlab.com";
+        identityFile = secrets.keys-glab.path;
+        forwardAgent = true;
+        addKeysToAgent = "yes";
       };
       # keep-sorted end
     };
@@ -51,10 +51,10 @@ in
 
   sops.secrets = {
     # keep-sorted start block=yes
-    keys-gh.path = sshDir + "/id_ed25519_gh";
     keys-gh-pub.path = sshDir + "/id_ed25519_gh.pub";
+    keys-gh.path = sshDir + "/id_ed25519_gh";
+    keys-glab-pub.path = sshDir + "/id_ed25519_glab.pub";
     keys-glab.path = sshDir + "/id_ed25519_glab";
-    keys-glab-pub.path = sshDir + "/id_ed25519_glab.pub";#
     # keep-sorted end
   };
 }

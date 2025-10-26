@@ -3,11 +3,13 @@
   pkgs,
   config,
   ...
-}: let
+}:
+let
   inherit (lib) optionalAttrs mergeAttrsList;
 
   cfg = config.garden.profiles;
-in {
+in
+{
   garden.packages = mergeAttrsList [
     (optionalAttrs cfg.graphical.enable {
       inherit (pkgs)

@@ -7,7 +7,6 @@
 }:
 let
   inherit (lib) optionalAttrs mergeAttrsList;
-  inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.garden.profiles;
 in
@@ -16,6 +15,11 @@ in
     (optionalAttrs cfg.workstation.enable {
       inherit (pkgs)
         # keep-sorted start
+        # wakatime-cli
+        # yq # yaml parser
+        # INFO: Extras
+        # nodejs_22
+        cargo
         # wishlist # fancy ssh
         # glow # fancy markdown
         # fx # fancy jq
@@ -25,11 +29,6 @@ in
         nix-output-monitor # much nicer nix build output
         rsync
         unzip
-        # wakatime-cli
-        # yq # yaml parser
-        # INFO: Extras
-        # nodejs_22
-        cargo
         # keep-sorted end
         ;
 

@@ -1,7 +1,4 @@
 { config, ... }:
-let
-  inherit (config.xdg) configHome;
-in
 {
   sops.secrets = {
     # wakatime = {

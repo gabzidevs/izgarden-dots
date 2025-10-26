@@ -1,12 +1,13 @@
-{
-...
-}:
+_:
 let
   mainUser = "gabz";
 in
 {
   garden.system = {
-    users = [ mainUser "rodz" ];
+    users = [
+      mainUser
+      "rodz"
+    ];
   };
 
   home-manager.users.rodz = {
@@ -25,4 +26,3 @@ in
     };
   };
 }
-

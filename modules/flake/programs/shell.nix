@@ -36,14 +36,18 @@
               lazygit
               croc
               nix-prefetch-github
-            ;
+              ;
 
-            # inherit (config)
-            #   formatter # nix formatter
-            # ;
+            # Formatting
+            inherit (pkgs)
+              nixfmt
+              ;
+            inherit (config)
+              formatter # nix formatter
+              ;
           };
 
-          # inputsFrom = [ config.formatter ];
+          inputsFrom = [ config.formatter ];
         };
 
         nixpkgs = pkgs.mkShellNoCC {

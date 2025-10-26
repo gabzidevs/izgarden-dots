@@ -2,9 +2,6 @@
   lib,
   ...
 }:
-let
-  inherit (lib.lists) optionals;
-in 
 {
   nix-homebrew.taps = {
   };

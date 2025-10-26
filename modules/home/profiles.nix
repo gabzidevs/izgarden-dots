@@ -11,8 +11,8 @@ in
       laptop
       ;
 
-    # workstation = { 
-    #   inherit (cfg.workstation) enable; 
+    # workstation = {
+    #   inherit (cfg.workstation) enable;
     #   git = {
     #     fsck = lib.mkEnableOption "Git FSCK flags" // {
     #       enable = lib.mkDefault true;

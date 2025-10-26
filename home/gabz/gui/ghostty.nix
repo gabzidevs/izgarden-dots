@@ -23,7 +23,7 @@
       font-family = config.garden.style.fonts.name;
       font-size = 13;
 
-      macos-option-as-alt = true; 
+      macos-option-as-alt = true;
       keybind = [
         "super+u=copy_url_to_clipboard"
       ];

@@ -17,7 +17,7 @@ in
       sources = options.catppuccin.sources.default;
 
       flavor = "mocha";
-      accent = "pink";
+      accent = "mauve";
 
       cursors = {
         enable = isGui;

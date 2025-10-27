@@ -45,13 +45,32 @@ let
         "group"
         "mode"
       ];
+      # record = ;
     in
-    {
-      sopsFile = "${self}/secrets/services/${file}.yaml";
-      inherit owner group mode;
+    # {
+    #   # sopsFile = "${self}/secrets/services/${file}.yaml";
+    #   inherit owner group mode;
+    # }
+    mkAltSecret {
+      inherit
+        file
+        owner
+        group
+        mode
+        ;
     }
     // args';
+
+  /**
+    INFO: Internal SOPS mapping exposed
+  */
+  mkAltSecret =
+    args:
+    {
+      sopsFile = "${self}/secrets/services/${args.file}.yaml";
+    }
+    // builtins.removeAttrs args [ "file" ];
 in
 {
-  inherit mkSystemSecret;
+  inherit mkSystemSecret mkAltSecret;
 }

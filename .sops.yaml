@@ -3,6 +3,7 @@ keys:
   - &gabz age15jcxjp49wajm27g9usseqz5cv5kj4ccp4n3e5ukzcyvf0fvuyyustngtpp
 
   # - &spacehound age172mwycpc633cguh9e0x0s9ytjm7u9eps69ec83u9shhs3rw83uss27fnzn
+  - &nebx age126xrfkxa3d7cm964yeyv0fgm3yzfdye3lzl7s0u3wyp5mrl49f8qt706m4
 
 creation_rules:
   - path_regex: secrets/gabz\.yaml
@@ -10,9 +11,11 @@ creation_rules:
       - age:
           - *g
           - *gabz
+          - *nebx
 
   - path_regex: secrets/services/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *g
           - *gabz
+          - *nebx

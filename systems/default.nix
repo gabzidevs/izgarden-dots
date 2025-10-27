@@ -15,6 +15,11 @@
 
     hosts = {
       # keep-sorted start block=yes newline_separated=yes
+      nebx = {
+        arch = "aarch64";
+        class = "darwin";
+      };
+
       spacehound = {
         arch = "aarch64";
         class = "darwin";

@@ -15,6 +15,7 @@ creation_rules:
       - age:
           - *g
           - *gabz
+          - *nebx
 
   - path_regex: secrets/services/[^/]+\.(yaml|json|env|ini)$
     key_groups:

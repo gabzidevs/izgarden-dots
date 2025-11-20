@@ -27,6 +27,7 @@ in
         # jq # json parser
         # just # cool build tool
         nix-output-monitor # much nicer nix build output
+        nixfmt
         rsync
         unzip
         # keep-sorted end

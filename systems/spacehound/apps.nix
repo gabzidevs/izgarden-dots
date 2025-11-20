@@ -1,7 +1,4 @@
-{
-  lib,
-  ...
-}:
+_:
 {
   nix-homebrew.taps = {
   };

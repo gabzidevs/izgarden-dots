@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# Agent Tasks Dashboard
+# Shows status of recurring automation tasks
+# Uses gum for glamorous TUI rendering
+
+set -e
+
+GUM="/Users/gabz/.local/share/mise/installs/gum/0.17.0/gum_0.17.0_Darwin_arm64/gum"
+
+LOG_DIR="$HOME/.local/share/agent-tasks/logs"
+DATE=$(date +%Y-%m-%d)
+LAST_RUN_FILE="$HOME/.local/share/agent-tasks/last-run.json"
+
+# Header
+$GUM style \
+  --border double \
+  --border-foreground cyan \
+  --foreground 39 \
+  --background 0 \
+  --padding "0 1" \
+  "🤖 AGENT TASKS DASHBOARD"
+
+echo ""
+
+# Schedule section
+$GUM style \
+  --border rounded \
+  --border-foreground blue \
+  --foreground 12 \
+  --padding "0 1" \
+  "$(echo -e "📅 SCHEDULE\nMon-Fri 9:00 AM  → Morning (Finn + Prisco)\nFriday 10:00 AM → Weekly (All Agents)")"
+
+echo ""
+
+# Last run status
+LAST_AGENT=$([ -f "$LAST_RUN_FILE" ] && jq -r '.agent // ""' < "$LAST_RUN_FILE" || echo "")
+LAST_TIME=$([ -f "$LAST_RUN_FILE" ] && jq -r '.timestamp // ""' < "$LAST_RUN_FILE" || echo "")
+
+if [ -n "$LAST_AGENT" ]; then
+  LAST_RUN_INFO="$LAST_AGENT at $LAST_TIME"
+else
+  LAST_RUN_INFO="No runs yet"
+fi
+
+$GUM style \
+  --border rounded \
+  --border-foreground yellow \
+  --foreground 11 \
+  --padding "0 1" \
+  "⏰ LAST RUN
+$LAST_RUN_INFO"
+
+echo ""
+
+# Today's runs header
+$GUM style \
+  --border rounded \
+  --border-foreground green \
+  --foreground 10 \
+  --padding "0 1" \
+  "📊 TODAY'S RUNS ($DATE)"
+
+echo ""
+
+# Build table data (gum table --columns sets headers)
+TABLE_DATA=""
+for agent in finn simon jake fern prismo prisco morning weekly; do
+  if [ -f "$LOG_DIR/${agent}-${DATE}.log" ]; then
+    STATUS="✓ Done"
+  else
+    STATUS="○ Pending"
+  fi
+  TABLE_DATA="$TABLE_DATA
+$agent,$STATUS"
+done
+
+echo "$TABLE_DATA" | $GUM table --columns 'Agent,Status' --widths '10,10' --print
+
+echo ""
+
+# Quick actions
+$GUM style \
+  --border rounded \
+  --border-foreground magenta \
+  --foreground 13 \
+  --padding "0 1" \
+  "⚡ QUICK ACTIONS
+
+Run: agent-tasks <command>
+
+  finn     - Git commit watch    | simon   - Playbook review
+  jake     - Tool upgrades       | fern    - Mise check
+  prismo   - Skill improvements  | prisco  - Task tracking
+  morning  - Daily check         | weekly  - Full rotation
+
+  --ai     - Add AI analysis (e.g., agent-tasks finn --ai)"
+
+# Show latest log snippets if requested
+if [ "$1" == "--logs" ] || [ "$1" == "-l" ]; then
+  echo ""
+  $GUM style \
+    --border rounded \
+    --border-foreground white \
+    --foreground 15 \
+    --padding "0 1" \
+    "📄 LATEST LOGS"
+  echo ""
+  
+  for agent in finn simon jake fern prismo prisco; do
+    if [ -f "$LOG_DIR/${agent}-${DATE}.log" ]; then
+      echo "--- $agent ---" | $GUM style --border none --foreground 14
+      tail -5 "$LOG_DIR/${agent}-${DATE}.log" | $GUM style --foreground 7
+      echo ""
+    fi
+  done
+fi

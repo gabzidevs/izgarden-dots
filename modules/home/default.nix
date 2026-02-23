@@ -8,6 +8,7 @@
     ./environment # environment variables & path
     ./extras.nix # modules that are not in this repo, and don't have a nice place to be imported in
     ./home.nix # home settings
+    ./karabiner.nix # karabiner keyboard configuration
     ./profiles.nix # profiles for different machines
     ./programs # ways to configure packages
     ./secrets.nix # secrets for the home directory

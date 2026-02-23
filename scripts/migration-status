@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+
+set -e
+
+STATUS_FILE="${HOME}/.local/state/ollama-server-status"
+
+usage() {
+  cat << 'EOF'
+Usage: server-status {status|check|set|clear} [options]
+
+Check or update local LLM server activation status.
+
+Commands:
+  status, check    Display current activation status (default)
+  set              Update activation status
+  clear            Remove status file
+
+Set Options:
+  --phase <name>     Phase name (standby|resources|model|server|verify|reconnect|complete|failed)
+  --progress <n>    Progress percentage (0-100)
+  --message <text>  Status message
+  --host <name>     Hostname (nebulanix|spacehound)
+  --model <name>    Selected model
+
+Examples:
+  server-status
+  server-status set --phase standby --progress 10 --message "Reviewing commits..."
+  server-status set --phase complete --progress 100 --message "Activation complete"
+  server-status clear
+EOF
+  exit 1
+}
+
+ensure_dir() {
+  mkdir -p "$(dirname "$STATUS_FILE")"
+}
+
+read_status() {
+  if [ ! -f "$STATUS_FILE" ]; then
+    echo "No activation in progress"
+    exit 0
+  fi
+  
+  while IFS='=' read -r key value; do
+    case "$key" in
+      PHASE) PHASE="$value" ;;
+      PROGRESS) PROGRESS="$value" ;;
+      MESSAGE) MESSAGE="$value" ;;
+      HOST) HOST="$value" ;;
+      MODEL) MODEL="$value" ;;
+      STARTED) STARTED="$value" ;;
+      UPDATED) UPDATED="$value" ;;
+    esac
+  done < "$STATUS_FILE"
+}
+
+progress_bar() {
+  local pct=$1
+  local filled=$((pct / 10))
+  local empty=$((10 - filled))
+  printf '[%s%s]' "$(printf '█%.0s' $(seq 1 $filled 2>/dev/null))" "$(printf '░%.0s' $(seq 1 $empty 2>/dev/null))"
+}
+
+phase_emoji() {
+  case "$1" in
+    standby) echo "📋" ;;
+    resources) echo "📊" ;;
+    model) echo "🤖" ;;
+    server) echo "🖥️" ;;
+    verify) echo "✅" ;;
+    reconnect) echo "🔄" ;;
+    complete) echo "🎉" ;;
+    failed) echo "❌" ;;
+    *) echo "⏳" ;;
+  esac
+}
+
+cmd_status() {
+  read_status
+  
+  echo ""
+  echo "🔄 Local LLM Server Status"
+  echo "========================="
+  echo "$(phase_emoji "$PHASE") Phase: ${PHASE:-unknown}"
+  echo "📊 Progress: $(progress_bar "${PROGRESS:-0}") ${PROGRESS:-0}%"
+  echo "💬 Message: ${MESSAGE:-No message}"
+  [ -n "$HOST" ] && echo "💻 Host: $HOST"
+  [ -n "$MODEL" ] && echo "🤖 Model: $MODEL"
+  echo "🕐 Started: ${STARTED:-unknown}"
+  echo "🕐 Updated: ${UPDATED:-unknown}"
+  echo ""
+  
+  case "${PHASE:-}" in
+    complete) echo "✅ Activation completed successfully" ;;
+    failed) echo "❌ Activation failed - check logs" ;;
+    reconnect) echo "⏳ Migration (restart) in progress..." ;;
+    *) echo "⏳ Activation in progress..." ;;
+  esac
+}
+
+cmd_set() {
+  local phase=""
+  local progress=""
+  local message=""
+  local host=""
+  local model=""
+  
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --phase) phase="$2"; shift 2 ;;
+      --progress) progress="$2"; shift 2 ;;
+      --message) message="$2"; shift 2 ;;
+      --host) host="$2"; shift 2 ;;
+      --model) model="$2"; shift 2 ;;
+      *) echo "Unknown option: $1" >&2; exit 1 ;;
+    esac
+  done
+  
+  if [ -z "$phase" ]; then
+    echo "Error: --phase is required" >&2
+    exit 1
+  fi
+  
+  if ! [[ "$progress" =~ ^[0-9]+$ ]] || [ "$progress" -lt 0 ] || [ "$progress" -gt 100 ]; then
+    echo "Error: --progress must be 0-100" >&2
+    exit 1
+  fi
+  
+  ensure_dir
+  
+  local started=""
+  if [ -f "$STATUS_FILE" ]; then
+    started=$(grep '^STARTED=' "$STATUS_FILE" 2>/dev/null | cut -d'=' -f2- || true)
+    [ -z "$host" ] && host=$(grep '^HOST=' "$STATUS_FILE" 2>/dev/null | cut -d'=' -f2- || true)
+    [ -z "$model" ] && model=$(grep '^MODEL=' "$STATUS_FILE" 2>/dev/null | cut -d'=' -f2- || true)
+  fi
+  [ -z "$started" ] && started=$(date -u +"%Y-%m-%dT%H:%M:%S")
+  [ -z "$host" ] && host=$(hostname -s 2>/dev/null || echo "unknown")
+  
+  cat > "$STATUS_FILE" << EOF
+PHASE=$phase
+PROGRESS=$progress
+MESSAGE=$message
+HOST=$host
+MODEL=$model
+STARTED=$started
+UPDATED=$(date -u +"%Y-%m-%dT%H:%M:%S")
+EOF
+  
+  echo "✅ Status updated: $phase ($progress%)"
+}
+
+cmd_clear() {
+  if [ -f "$STATUS_FILE" ]; then
+    rm "$STATUS_FILE"
+    echo "✅ Server status cleared"
+  else
+    echo "ℹ️  No status file to clear"
+  fi
+}
+
+case "${1:-status}" in
+  status|check) cmd_status ;;
+  set) shift; cmd_set "$@" ;;
+  clear) cmd_clear ;;
+  -h|--help|help) usage ;;
+  *) echo "Unknown command: $1" >&2; usage ;;
+esac

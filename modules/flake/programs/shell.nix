@@ -19,7 +19,23 @@
             pkgs.sops # secrets management
             config.formatter # nix formatter
             pkgs.nix-output-monitor # get clean diff between generations
-          ];
+          ]
+          ++ builtins.attrValues {
+            inherit (pkgs)
+              ssh-to-age
+              age
+
+              fish
+              ripgrep
+              fd
+              eza
+
+              mise
+              lazygit
+              croc
+              nix-prefetch-github
+              ;
+          };
 
           inputsFrom = [ config.formatter ];
         };

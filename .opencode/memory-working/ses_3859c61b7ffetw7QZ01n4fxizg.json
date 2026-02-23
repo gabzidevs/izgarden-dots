@@ -1,0 +1,23 @@
+{
+  "sessionID": "ses_3859c61b7ffetw7QZ01n4fxizg",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "type": "other",
+      "content": "test item",
+      "source": "manual",
+      "timestamp": 1771579880513,
+      "mentions": 1,
+      "id": "wm_1771579880514_yet4yd6",
+      "relevanceScore": 1,
+      "lastEventCounter": 1
+    }
+  ],
+  "eventCounter": 1,
+  "updatedAt": "2026-02-20T09:31:20.514Z"
+}

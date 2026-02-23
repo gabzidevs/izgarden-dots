@@ -1,0 +1,21 @@
+{
+  "sessionID": "ses_385d9e9e4ffewaXtkgFhKCivMa",
+  "blocks": {
+    "goal": {
+      "value": "testing memory",
+      "charLimit": 1000,
+      "lastModified": "2026-02-20T08:24:43.291Z"
+    },
+    "progress": {
+      "value": "",
+      "charLimit": 2000,
+      "lastModified": "2026-02-20T08:24:43.291Z"
+    },
+    "context": {
+      "value": "",
+      "charLimit": 1500,
+      "lastModified": "2026-02-20T08:24:43.291Z"
+    }
+  },
+  "updatedAt": "2026-02-20T08:24:43.291Z"
+}

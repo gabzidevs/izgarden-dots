@@ -11,7 +11,13 @@
   config = {
     sops = {
       defaultSopsFile = "${self}/secrets/${name}.yaml";
-      age.sshKeyFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      # TODO: Investigate issue with keypair having a passphrase
+      # age.sshKeyFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      # age.sshKeyFile = "${config.home.homeDirectory}/.ssh/keys-root";
+      # age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      # age.generateKey = true;
+
+      age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
     };
   };
 }

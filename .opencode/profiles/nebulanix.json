@@ -1,0 +1,56 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "name": "nebulanix",
+  "description": "Full-featured profile for Nebulanix (48GB M4 Pro)",
+  "models": {
+    "qwen2.5-3b-lich": {
+      "provider": "ollama",
+      "temperature": 0.01,
+      "top_p": 0.15,
+      "top_k": 5
+    },
+    "qwen3-8b-lich": {
+      "provider": "ollama",
+      "temperature": 0.01,
+      "top_p": 0.15,
+      "top_k": 5
+    },
+    "qwen3-tooled-small": {
+      "provider": "ollama",
+      "temperature": 0.05,
+      "top_p": 0.9,
+      "top_k": 20
+    },
+    "qwen2.5-small-tooled": {
+      "provider": "ollama",
+      "temperature": 0.05,
+      "top_p": 0.9,
+      "top_k": 20
+    },
+    "qwen3-moe-tooled": {
+      "provider": "ollama",
+      "temperature": 0.15,
+      "top_p": 0.95
+    },
+    "qwen3-coder-tooled": {
+      "provider": "ollama",
+      "temperature": 0.1,
+      "top_p": 0.9
+    }
+  },
+  "plugins": [
+    "kdco/background-agents",
+    "kdco/notify",
+    "npm:opencode-toolbox@0.10.4",
+    "npm:opencode-working-memory",
+    "npm:opencode-antigravity-auth",
+    "npm:@openspoon/subtask2",
+    "npm:@slkiser/opencode-quota",
+    "npm:@nick-vi/opencode-type-inject",
+    "npm:opencode-snippets",
+    "npm:@franlol/opencode-md-table-formatter",
+    "npm:@tarquinen/opencode-dcp",
+    "npm:@ramtinj95/opencode-tokenscope",
+    "npm:opencode-rules"
+  ]
+}

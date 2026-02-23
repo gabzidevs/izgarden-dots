@@ -82,12 +82,71 @@ switch *args:
     just builder switch {{ args }}
     lix diff "$before"
 
+# provision a new macOS host (use --use-nix-daemon to work around Lix daemon bugs)
 [group('rebuild')]
 [macos]
-[no-exit-message]
-provision host:
-    sudo nix run github:LnL7/nix-darwin -- switch --flake {{ flake }}#{{ host }}
-    sudo -i nix-env --uninstall lix # we need to remove the none declarative install of lix
+[arg('use_nix_daemon', long="use-nix-daemon", value="false")]
+[arg('cleanup_lix', long="cleanup-lix", value="false")]
+provision host use_nix_daemon="false" cleanup_lix="false":
+    #!/usr/bin/env bash
+    set -uo pipefail
+    
+    echo "=== Starting provision for {{ host }} ===" >&2
+    
+    # Run nix-darwin rebuild with live output
+    # Note: nix-darwin often returns exit code 1 even on success, so we check output
+    if [[ "{{ use_nix_daemon }}" == "true" ]]; then
+        "{{ justfile_directory() }}/scripts/with-nix-daemon.sh" \
+            sudo -E nix run github:LnL7/nix-darwin -- switch --flake {{ flake }}#{{ host }} 2>&1 | tee /tmp/nix-darwin-output.log
+    else
+        sudo -E nix run github:LnL7/nix-darwin -- switch --flake {{ flake }}#{{ host }} 2>&1 | tee /tmp/nix-darwin-output.log
+    fi
+    NIX_DARWIN_EXIT=${PIPESTATUS[0]}
+    
+    # Check if rebuild actually failed (not just exit code 1 quirk)
+    if grep -q "error:" /tmp/nix-darwin-output.log; then
+        echo "⚠️ nix-darwin rebuild had errors, continuing with post-install tasks..." >&2
+        tail -20 /tmp/nix-darwin-output.log >&2
+    else
+        echo "✅ nix-darwin rebuild successful"
+    fi
+    
+    echo "=== Build complete! Running post-install tasks ===" >&2
+    
+    # Cleanup lix if requested
+    if [[ "{{ cleanup_lix }}" == "true" ]]; then
+        if ! sudo -i nix-env --uninstall lix; then
+            echo "⚠️ Failed to uninstall lix" >&2
+        fi
+    fi
+    
+    # Setup PATH for mise shims
+    export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
+    
+    # Find mise executable
+    MISE_PATH="$(command -v mise 2>/dev/null || true)"
+    
+    # Run mise as current user (not sudo)
+    echo "=== Installing mise tools ===" >&2
+    if [[ -z "$MISE_PATH" ]]; then
+        echo "⚠️ mise not found in PATH, skipping mise install" >&2
+    elif ! "$MISE_PATH" install; then
+        echo "⚠️ mise install failed" >&2
+    fi
+    if [[ -n "$MISE_PATH" ]]; then
+        "$MISE_PATH" ls
+    fi
+    
+    # Install OpenCode plugins
+    # echo "=== Installing OpenCode plugins ===" >&2
+    # if [[ -n "$MISE_PATH" ]]; then
+    #     mkdir -p ~/.cache/opencode
+    #     cd ~/.cache/opencode && "$MISE_PATH" x bun -- bun install 2>&1 || echo "⚠️ OpenCode plugin install failed" >&2
+    # else
+    #     echo "⚠️ mise not found, skipping OpenCode plugins" >&2
+    # fi
+    
+    echo "=== ✅ Provision complete! ===" >&2
 
 # package group
 # build the package, you must specify the package you want to build

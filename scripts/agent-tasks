@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# Agent recurring tasks runner
+# Usage: agent-tasks <finn|simon|jake|fern|prismo|prisco|morning|weekly> [--ai]
+# Schedule: Mon-Fri 9am (morning), Friday 10am (weekly)
+# 
+# Options:
+#   --ai, -a    Use OpenCode CLI for AI-powered analysis
+#   --help, -h  Show this help
+
+AGENT=""
+USE_AI=false
+
+# Parse arguments
+for arg in "$@"; do
+  case "$arg" in
+    --ai|-a)
+      USE_AI=true
+      ;;
+    --help|-h)
+      show_help
+      exit 0
+      ;;
+    -*)
+      echo "Unknown option: $arg"
+      exit 1
+      ;;
+    *)
+      AGENT="$arg"
+      ;;
+  esac
+done
+
+AGENT=${AGENT:-morning}
+FLAKE_DIR="$HOME/.config/flake"
+LOG_DIR="$HOME/.local/share/agent-tasks/logs"
+DATE=$(date +%Y-%m-%d)
+
+mkdir -p "$LOG_DIR"
+
+log() {
+    echo "[$(date '+%H:%M:%S')] $1" | tee -a "$LOG_DIR/${AGENT}-${DATE}.log"
+}
+
+# AI-powered analysis using OpenCode CLI
+run_ai_analysis() {
+    local prompt="$1"
+    local output_file="$2"
+    
+    log "Running AI analysis..."
+    
+    # Run OpenCode with the prompt and save output
+    mise x opencode@latest -- opencode --print-only "$prompt" >> "$output_file" 2>&1 || \
+    echo "AI analysis requires manual OpenCode session" >> "$output_file"
+}
+
+show_help() {
+    echo "Agent Tasks Runner"
+    echo ""
+    echo "Usage: agent-tasks <command> [options]"
+    echo ""
+    echo "Commands:"
+    echo "  finn     - Git commit watch"
+    echo "  simon    - Playbook/Ollama review"
+    echo "  jake     - Tool upgrades check"
+    echo "  fern     - Mise maintenance"
+    echo "  prismo   - Skill improvements"
+    echo "  prisco   - Task tracking"
+    echo "  morning  - Daily check (finn + prisco)"
+    echo "  weekly   - Full rotation (all agents)"
+    echo "  help     - Show this help"
+    echo ""
+    echo "Options:"
+    echo "  --ai, -a  Use OpenCode CLI for AI-powered analysis"
+    echo ""
+    echo "Schedule:"
+    echo "  Morning:  Mon-Fri 9:00 AM"
+    echo "  Weekly:   Friday 10:00 AM"
+    echo ""
+    echo "Examples:"
+    echo "  agent-tasks finn           # Basic git watch"
+    echo "  agent-tasks finn --ai      # AI-powered git analysis"
+    echo "  agent-tasks weekly --ai   # Full AI-powered weekly report"
+}
+
+case "$AGENT" in
+  finn)
+    log "=== Finn: Commit Watch ==="
+    cd "$FLAKE_DIR"
+    echo "--- Git Status ---" >> "$LOG_DIR/finn-${DATE}.log"
+    git status --short 2>/dev/null >> "$LOG_DIR/finn-${DATE}.log" || echo "Not a git repo" >> "$LOG_DIR/finn-${DATE}.log"
+    echo "--- Git Diff Stat ---" >> "$LOG_DIR/finn-${DATE}.log"
+    git diff --stat 2>/dev/null >> "$LOG_DIR/finn-${DATE}.log" || echo "No changes" >> "$LOG_DIR/finn-${DATE}.log"
+    
+    if $USE_AI; then
+        run_ai_analysis "Analyze the git status in $FLAKE_DIR. What files have changed? Should we commit these changes? Provide a brief summary." "$LOG_DIR/finn-${DATE}.log"
+    fi
+    echo "✓ Commit watch complete"
+    ;;
+
+  simon)
+    log "=== Simon: Playbook/Ollama Review ==="
+    echo "--- Docs ---" >> "$LOG_DIR/simon-${DATE}.log"
+    ls -la "$FLAKE_DIR/.opencode/docs/scripts/" >> "$LOG_DIR/simon-${DATE}.log" 2>&1
+    echo "--- Plans ---" >> "$LOG_DIR/simon-${DATE}.log"
+    ls -la "$FLAKE_DIR/.opencode/plans/" >> "$LOG_DIR/simon-${DATE}.log" 2>&1
+    
+    if $USE_AI; then
+        run_ai_analysis "Review the Ollama documentation and playbooks in $FLAKE_DIR/.opencode/. Are there any outdated commands or improvements needed? Summarize recommendations." "$LOG_DIR/simon-${DATE}.log"
+    fi
+    echo "✓ Playbook review complete"
+    ;;
+
+  jake)
+    log "=== Jake: Tool Upgrades ==="
+    echo "--- Local Bin ---" >> "$LOG_DIR/jake-${DATE}.log"
+    ls -la "$HOME/.local/bin/" >> "$LOG_DIR/jake-${DATE}.log" 2>&1
+    echo "--- Brew Packages ---" >> "$LOG_DIR/jake-${DATE}.log"
+    brew list --versions 2>/dev/null | head -20 >> "$LOG_DIR/jake-${DATE}.log" || echo "brew not available" >> "$LOG_DIR/jake-${DATE}.log"
+    
+    if $USE_AI; then
+        run_ai_analysis "Check the tools in ~/.local/bin/ and suggest any upgrades or new tools that would improve the workflow. Focus on CLI utilities and TUI tools." "$LOG_DIR/jake-${DATE}.log"
+    fi
+    echo "✓ Tool upgrade check complete"
+    ;;
+
+  fern)
+    log "=== Fern: Mise Maintenance ==="
+    echo "--- Mise Outdated ---" >> "$LOG_DIR/fern-${DATE}.log"
+    mise outdated 2>&1 >> "$LOG_DIR/fern-${DATE}.log" || echo "No outdated tools" >> "$LOG_DIR/fern-${DATE}.log"
+    echo "--- Mise Versions ---" >> "$LOG_DIR/fern-${DATE}.log"
+    mise ls 2>&1 | head -20 >> "$LOG_DIR/fern-${DATE}.log" || echo "mise check done" >> "$LOG_DIR/fern-${DATE}.log"
+    
+    if $USE_AI; then
+        run_ai_analysis "Analyze the mise tool versions in $FLAKE_DIR/home/gabz/core/system/mise.nix. Are there any outdated tools that should be updated? Check for regressions." "$LOG_DIR/fern-${DATE}.log"
+    fi
+    echo "✓ Mise maintenance complete"
+    ;;
+
+  prismo)
+    log "=== Prismo: Skill Improvements ==="
+    echo "--- Agents ---" >> "$LOG_DIR/prismo-${DATE}.log"
+    ls -la "$FLAKE_DIR/.opencode/time-room/agents/" >> "$LOG_DIR/prismo-${DATE}.log" 2>&1
+    echo "--- Skills ---" >> "$LOG_DIR/prismo-${DATE}.log"
+    ls -la "$FLAKE_DIR/.opencode/skills/" >> "$LOG_DIR/prismo-${DATE}.log" 2>&1 || echo "No skills dir" >> "$LOG_DIR/prismo-${DATE}.log"
+    
+    if $USE_AI; then
+        run_ai_analysis "Review the agent prompts in $FLAKE_DIR/.opencode/time-room/agents/. Identify any gaps, outdated information, or improvements to make the agents more effective." "$LOG_DIR/prismo-${DATE}.log"
+    fi
+    echo "✓ Skill review complete"
+    ;;
+
+  prisco)
+    log "=== Prisco: Task Tracking ==="
+    echo "--- Active Plans ---" >> "$LOG_DIR/prisco-${DATE}.log"
+    ls "$FLAKE_DIR/.opencode/plans/" >> "$LOG_DIR/prisco-${DATE}.log" 2>&1
+    echo "--- Todo ---" >> "$LOG_DIR/prisco-${DATE}.log"
+    ls "$FLAKE_DIR/.opencode/todos/" >> "$LOG_DIR/prisco-${DATE}.log" 2>&1 || echo "No todos dir" >> "$LOG_DIR/prisco-${DATE}.log"
+    
+    if $USE_AI; then
+        run_ai_analysis "Review the active plans in $FLAKE_DIR/.opencode/plans/. What's the status of each? What tasks are pending and should be prioritized?" "$LOG_DIR/prisco-${DATE}.log"
+    fi
+    echo "✓ Task tracking complete"
+    ;;
+
+  morning)
+    log "=== Morning Run: All Agents ==="
+    echo "Running morning check..."
+    agent-tasks finn "$@"
+    agent-tasks prisco "$@"
+    echo "✓ Morning run complete"
+    ;;
+
+  weekly)
+    log "=== Weekly Run: Full Rotation ==="
+    echo "Running weekly rotation..."
+    agent-tasks finn "$@"
+    agent-tasks simon "$@"
+    agent-tasks jake "$@"
+    agent-tasks fern "$@"
+    agent-tasks prismo "$@"
+    agent-tasks prisco "$@"
+    echo "✓ Weekly run complete"
+    ;;
+
+  help|--help|-h)
+    show_help
+    ;;
+
+  *)
+    echo "Unknown agent: $AGENT"
+    echo "Run 'agent-tasks help' for usage"
+    exit 1
+    ;;
+esac
+
+# Update last run timestamp
+echo "{\"agent\": \"$AGENT\", \"ai\": $USE_AI, \"timestamp\": \"$(date -Iseconds)\"}" > "$HOME/.local/share/agent-tasks/last-run.json"

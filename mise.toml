@@ -1,0 +1,6 @@
+[tools]
+neovim = "0.11.4"
+
+[tasks.provision]
+run = "cd /Users/gabz/.config/flake && bash scripts/just-provision"
+description = "Self-healing host-aware provision script with git branch management"

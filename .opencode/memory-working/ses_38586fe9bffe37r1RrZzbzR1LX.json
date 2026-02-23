@@ -1,0 +1,63 @@
+{
+  "sessionID": "ses_38586fe9bffe37r1RrZzbzR1LX",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "id": "wm_1771581290691_rtu9ekg",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree.ts",
+      "source": "tool:glob",
+      "timestamp": 1771581290691,
+      "relevanceScore": 2.11531875,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771581290691_2h1ilp4",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/terminal.ts",
+      "source": "tool:glob",
+      "timestamp": 1771581290691,
+      "relevanceScore": 1.900375,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771581290691_8uvsb8x",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/state.ts",
+      "source": "tool:glob",
+      "timestamp": 1771581290691,
+      "relevanceScore": 1.6475,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771581290691_g3keus1",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/index.ts",
+      "source": "tool:glob",
+      "timestamp": 1771581290691,
+      "relevanceScore": 1.35,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771581290691_62vsy0e",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/temp.ts",
+      "source": "tool:glob",
+      "timestamp": 1771581290691,
+      "relevanceScore": 1,
+      "mentions": 1,
+      "lastEventCounter": 5
+    }
+  ],
+  "eventCounter": 5,
+  "updatedAt": "2026-02-20T09:54:50.691Z"
+}

@@ -1,35 +1,10 @@
-<div align="center">
-  <h1>isabel's dotfiles</h1>
+# This is not the garden you're looking for 🌱
+(But if you know, you know)
 
-  <img alt="stars" src="https://img.shields.io/github/stars/isabelroses/dotfiles?color=f5c2e7&labelColor=303446&style=for-the-badge&logo=starship&logoColor=f5c2e7" />
-  <img alt="ci" src="https://img.shields.io/github/actions/workflow/status/isabelroses/dotfiles/check.yml?label=build&color=a6e3a1&labelColor=303446&style=for-the-badge&logo=github&logoColor=a6e3a1" />
-  <img alt="repo size" src="https://img.shields.io/github/repo-size/isabelroses/dotfiles?color=fab387&labelColor=303446&style=for-the-badge&logo=github&logoColor=fab387" />
-  <img alt="license" src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=EUPL-1.2&logoColor=ca9ee6&colorA=313244&colorB=cba6f7" />
-  <img alt="nixos-unstable" src="https://img.shields.io/badge/NixOS-unstable-blue.svg?style=for-the-badge&labelColor=303446&logo=NixOS&logoColor=white&color=91D7E3" />
-</div>
+Some gardens grow in the cloud ☁️ — others in the basement 🏠
+This one grew too close to the metal ⚡
 
-<br />
+The bramble grew too thick 🌿
+ssh://user@[REDACTED].local/git/undergarden.git
 
-![Preview image](./docs/src/images/main.webp)
-
-![image of my flakes topology](./docs/src/images/topology.webp)
-
-### Foreword
-
-This repository contains my **personal** configuration for my systems, so its really important that you know it's **personal** and not everything will fit your needs.
-Therefore most things will not work out of the box without some changes, so be warned!!!!
-
-> [!WARNING]
-> Also to note that this configuration will **not** work if you do not change any of the [secrets](./secrets) since they are encrypted.
-
-### What does this repo provided
-
-- Modular configuration, so you can add or remove parts of the configuration
-- Sensible defaults, so you can get started quickly
-- Docs kind of
-- [Catppuccin](https://github.com/catppuccin/catppuccin) everywhere.
-
-> [!NOTE]
-> Please read [the documentation](https://dotfiles.isabelroses.com/)
-
-[![Star History Chart](https://api.star-history.com/svg?repos=isabelroses/dotfiles&type=Date)](https://star-history.com/#isabelroses/dotfiles&Date)
+> 🌿 @fern tends to the undergrowth — don't pull the brambles alone.

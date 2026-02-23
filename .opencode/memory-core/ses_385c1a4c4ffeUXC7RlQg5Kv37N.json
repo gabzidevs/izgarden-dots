@@ -1,0 +1,21 @@
+{
+  "sessionID": "ses_385c1a4c4ffeUXC7RlQg5Kv37N",
+  "blocks": {
+    "goal": {
+      "value": "OCX worktree test completed",
+      "charLimit": 1000,
+      "lastModified": "2026-02-20T08:51:23.001Z"
+    },
+    "progress": {
+      "value": "",
+      "charLimit": 2000,
+      "lastModified": "2026-02-20T08:50:38.628Z"
+    },
+    "context": {
+      "value": "",
+      "charLimit": 1500,
+      "lastModified": "2026-02-20T08:50:38.628Z"
+    }
+  },
+  "updatedAt": "2026-02-20T08:51:23.001Z"
+}

@@ -79,3 +79,21 @@ Futhermore, to batch update all secrets, you can run:
 ```bash
 find secrets/ -name "*.yaml" | xargs -I {} sops updatekeys -y {}
 ```
+
+## macOS quirks
+
+On macOS, sops-nix uses a LaunchAgent to decrypt secrets at login time. However, there is a known issue where the LaunchAgent may not work properly after provisioning (see [home-manager#6536](https://github.com/nix-community/home-manager/issues/6536)).
+
+### Automatic workaround
+
+The flake includes an automatic workaround that decrypts secrets during home-manager activation if the LaunchAgent is not linked. This should work in most cases.
+
+### Manual decryption
+
+If you need to manually decrypt secrets, you can:
+
+1. **Via Raycast**: Search for "Decrypt SOPS Secrets" in Raycast
+2. **Via command line**: Run the decryption script:
+   ```bash
+   ~/.config/flake/scripts/decrypt-sops-secrets.sh
+   ```

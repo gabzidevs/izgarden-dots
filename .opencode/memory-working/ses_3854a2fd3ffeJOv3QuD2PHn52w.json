@@ -1,0 +1,63 @@
+{
+  "sessionID": "ses_3854a2fd3ffeJOv3QuD2PHn52w",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "id": "wm_1771585302414_cqon1pe",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plans/PLAN_PLUGIN_TESTING.md",
+      "source": "tool:glob",
+      "timestamp": 1771585302413,
+      "relevanceScore": 2.11531875,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771585302414_3bbac3e",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/PLUGIN_ANNOUNCEMENT.md",
+      "source": "tool:glob",
+      "timestamp": 1771585302413,
+      "relevanceScore": 1.900375,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771585302414_m3nc7bu",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/docs/PLUGINS_SETUP.md",
+      "source": "tool:glob",
+      "timestamp": 1771585302413,
+      "relevanceScore": 1.6475,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771585302414_3zrn38s",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/AGENTS.md",
+      "source": "tool:glob",
+      "timestamp": 1771585302413,
+      "relevanceScore": 1.35,
+      "mentions": 1,
+      "lastEventCounter": 5
+    },
+    {
+      "id": "wm_1771585302414_c74ggpn",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/skills/spawn-dashboard/SKILL.md",
+      "source": "tool:glob",
+      "timestamp": 1771585302413,
+      "relevanceScore": 1,
+      "mentions": 1,
+      "lastEventCounter": 5
+    }
+  ],
+  "eventCounter": 5,
+  "updatedAt": "2026-02-20T11:01:42.414Z"
+}

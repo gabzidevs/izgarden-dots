@@ -1,0 +1,73 @@
+{
+  "sessionID": "ses_3855b0b8cffeJf2SZMsSgM0B0x",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "id": "wm_1771584171249_3zialme",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/terminal.ts",
+      "source": "tool:glob",
+      "timestamp": 1771584171249,
+      "relevanceScore": 2.2980209375,
+      "mentions": 1,
+      "lastEventCounter": 6
+    },
+    {
+      "id": "wm_1771584171249_dcpk0nk",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/state.ts",
+      "source": "tool:glob",
+      "timestamp": 1771584171249,
+      "relevanceScore": 2.11531875,
+      "mentions": 1,
+      "lastEventCounter": 6
+    },
+    {
+      "id": "wm_1771584171249_cqtypaa",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree.ts",
+      "source": "tool:glob",
+      "timestamp": 1771584171249,
+      "relevanceScore": 1.900375,
+      "mentions": 1,
+      "lastEventCounter": 6
+    },
+    {
+      "id": "wm_1771584171249_q9vgo9n",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/index.ts",
+      "source": "tool:glob",
+      "timestamp": 1771584171249,
+      "relevanceScore": 1.6475,
+      "mentions": 1,
+      "lastEventCounter": 6
+    },
+    {
+      "id": "wm_1771584171249_t15cmkr",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/temp.ts",
+      "source": "tool:glob",
+      "timestamp": 1771584171249,
+      "relevanceScore": 1.35,
+      "mentions": 1,
+      "lastEventCounter": 6
+    },
+    {
+      "id": "wm_1771584172311_u9fnpb4",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plans/PLAN_PLUGIN_TESTING.md",
+      "source": "tool:grep",
+      "timestamp": 1771584172311,
+      "relevanceScore": 1,
+      "mentions": 1,
+      "lastEventCounter": 6
+    }
+  ],
+  "eventCounter": 6,
+  "updatedAt": "2026-02-20T10:42:52.311Z"
+}

@@ -7,3 +7,13 @@ result*
 
 # deploy script
 .deploy-summary
+
+# local git
+.soft-serve
+
+# OpenCode memory
+# Runtime data (always ignore)
+.opencode/memory-working/*_pressure.json
+.opencode/memory-working/tool-outputs/
+# Core memory: CAN be committed for cross-machine context sharing
+# Working memory sessions: selectively commit valuable sessions

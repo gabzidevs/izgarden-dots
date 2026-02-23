@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@spoons-and-mirrors/pocket-universe": "github:spoons-and-mirrors/pocket-universe"
+  }
+}

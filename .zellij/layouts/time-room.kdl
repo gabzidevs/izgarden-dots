@@ -1,0 +1,35 @@
+// Time Room Dashboard Layout
+// Usage: zellij action new-tab --layout time-room
+// Or press Ctrl+d (if keybind added)
+
+layout {
+    tab_template name="time-room" {
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        
+        // Main split: agents on left, ollama on right
+        pane split_direction="vertical" {
+            // Left: Agent Tasks Dashboard (40%)
+            pane size="40%" name="agents" {
+                command "agent-tasks-dashboard"
+            }
+            
+            // Right: Vertical split for ollama + system
+            pane split_direction="horizontal" {
+                // Top right: Ollama status (60%)
+                pane size="60%" name="ollama" {
+                    command "watch" args "-n" "5" "ollamactl" "status"
+                }
+                
+                // Bottom right: System info (40%)
+                pane size="40%" name="system" {
+                    command "watch" args "-n" "5" "ollama-sysopt" "--thermal"
+                }
+            }
+        }
+    }
+    
+    // Default tab with this layout
+    tab name="Time Room" layout_name="time-room"
+}

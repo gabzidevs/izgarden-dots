@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "name": "spacehound",
+  "description": "Slim profile for Spacehound (18GB M3)",
+  "plugins": [
+    "kdco/background-agents",
+    "npm:opencode-working-memory",
+    "npm:opencode-toolbox@0.10.4",
+    "npm:opencode-antigravity-auth",
+    "npm:@slkiser/opencode-quota",
+    "npm:opencode-snippets"
+  ]
+}

@@ -1,0 +1,334 @@
+#!/usr/bin/env bash
+
+# ocx-cleanup - OCX Plugin cleanup with change detection and OpenCode integration
+# Usage: 
+#   ocx-cleanup --auto --flake /path/to/flake    # Auto mode (from Nix activation)
+#   ocx-cleanup --sync                           # Sync mode (gum selection)
+#   ocx-cleanup --dry-run                        # Show what would be cleaned
+
+set -e
+
+OCX_CONFIG="$HOME/.config/opencode/opencode.jsonc"
+MISE_SHIM="$HOME/.local/share/mise/shims"
+FLAKE_PATH="${FLAKE_PATH:-$HOME/.config/flake}"
+MODE="menu"
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --auto)
+      MODE="auto"
+      shift
+      ;;
+    --sync)
+      MODE="sync"
+      shift
+      ;;
+    --dry-run)
+      MODE="dry-run"
+      shift
+      ;;
+    --flake)
+      FLAKE_PATH="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+activate_mise() {
+  eval "$(${MISE_SHIM}/..activate zsh --shims 2>/dev/null || echo 'export PATH="'"$MISE_SHIM"':$PATH"')"
+  export PATH="$MISE_SHIM:$PATH"
+}
+
+# Get installed plugins from opencode.jsonc
+get_installed_plugins() {
+  if [ -f "$OCX_CONFIG" ]; then
+    grep -oP '"[^"]+"' "$OCX_CONFIG" | tr -d '"' | grep -v "^\$schema" | grep -v "opencode.ai" | grep -v "permission" | grep -v "registry"
+  fi
+}
+
+# Get expected plugins from Nix config
+get_expected_plugins() {
+  local users_nix="$FLAKE_PATH/systems/nebulanix/users.nix"
+  if [ -f "$users_nix" ]; then
+    # Extract npmPlugins and plugins lists
+    grep -oP '"npm:[^"]+"' "$users_nix" | tr -d '"' | sed 's/^npm://'
+    grep -oP '"[a-zA-Z0-9_-]+/[^"]+"' "$users_nix" | grep -v "npm:" | tr -d '"'
+  fi
+}
+
+# Find orphaned plugins (installed but not in Nix)
+find_orphans() {
+  local installed="$1"
+  local expected="$2"
+  
+  for plugin in $installed; do
+    if ! echo "$expected" | grep -q "^${plugin}$"; then
+      echo "$plugin"
+    fi
+  done
+}
+
+# Generate cleanup commands for orphaned plugins
+generate_cleanup_commands() {
+  local orphans="$1"
+  
+  for plugin in $orphans; do
+    echo "# Remove orphaned plugin: $plugin"
+    echo "rm -rf $HOME/.config/opencode/node_modules/$plugin"
+    echo "rm -rf $HOME/.config/opencode/plugin/$plugin"
+    # Also remove from config (would need manual or OpenCode)
+  done
+}
+
+# Launch local OpenCode for review
+launch_opencode_review() {
+  local orphans="$1"
+  local cleanup_cmds="$2"
+  
+  echo "Launching local OpenCode for review..."
+  echo "Orphaned plugins: $orphans"
+  echo ""
+  
+  # Generate a prompt for OpenCode
+  cat > /tmp/ocx-cleanup-prompt.md << EOF
+# OCX Plugin Cleanup Review
+
+You are helping cleanup orphaned OCX plugins.
+
+## Detected Orphaned Plugins
+$orphans
+
+## Proposed Cleanup Commands
+$cleanup_cmds
+
+## Tasks
+
+1. Review the orphaned plugins
+2. Confirm which should be removed (safe to remove all - these are not in your Nix config)
+3. Execute the cleanup commands
+4. If any files were modified in the flake that need committing, commit them with a descriptive message
+
+The flake is at: $FLAKE_PATH
+EOF
+
+  # Launch OpenCode with local Ollama
+  cd "$FLAKE_PATH"
+  OPENCODE_CONFIG_DIR="$HOME/.config/opencode" \
+  opencode --local /tmp/ocx-cleanup-prompt.md
+}
+
+# Commit changes with Finn
+commit_changes() {
+  local flake_path="$1"
+  
+  echo "Checking for changes to commit..."
+  cd "$flake_path"
+  
+  if [ -n "$(git status --short)" ]; then
+    echo "Changes detected, committing..."
+    git add -A
+    git commit -m "chore(opencode): cleanup orphaned plugins"
+    git push
+    echo "✅ Changes committed and pushed!"
+  else
+    echo "No changes to commit."
+  fi
+}
+
+# Auto mode - called from Nix activation
+run_auto_mode() {
+  activate_mise
+  
+  echo "Running OCX cleanup in auto mode..."
+  echo "Flake path: $FLAKE_PATH"
+  echo ""
+  
+  # Get plugins
+  local installed=$(get_installed_plugins)
+  local expected=$(get_expected_plugins)
+  
+  echo "Installed plugins: $installed"
+  echo "Expected plugins: $expected"
+  echo ""
+  
+  # Find orphans
+  local orphans=$(find_orphans "$installed" "$expected")
+  
+  if [ -z "$orphans" ]; then
+    echo "✅ No orphaned plugins detected. In sync!"
+    exit 0
+  fi
+  
+  echo "⚠️ Detected orphaned plugins:"
+  echo "$orphans"
+  echo ""
+  
+  # Generate cleanup commands
+  local cleanup_cmds=$(generate_cleanup_commands "$orphans")
+  
+  # Launch OpenCode for review
+  if gum confirm "Launch local OpenCode to review cleanup?"; then
+    launch_opencode_review "$orphans" "$cleanup_cmds"
+    
+    # Commit changes
+    commit_changes "$FLAKE_PATH"
+  else
+    echo "Cleanup skipped. Run manually:"
+    echo "$cleanup_cmds"
+  fi
+}
+
+# Sync mode - gum selection
+run_sync_mode() {
+  activate_mise
+  
+  echo "Running OCX cleanup in sync mode..."
+  echo ""
+  
+  # Get installed plugins
+  local installed=$(get_installed_plugins)
+  
+  if [ -z "$installed" ]; then
+    echo "No plugins installed."
+    exit 0
+  fi
+  
+  # Use gum to select plugins to keep
+  echo "Select plugins to KEEP (unselected will be removed):"
+  local kept=$(echo "$installed" | gum filter --no-limit --selected=all)
+  
+  local to_remove=""
+  for plugin in $installed; do
+    if ! echo "$kept" | grep -q "^${plugin}$"; then
+      to_remove="$to_remove $plugin"
+    fi
+  done
+  
+  if [ -z "$to_remove" ]; then
+    echo "All plugins selected to keep. No changes."
+    exit 0
+  fi
+  
+  echo "Plugins to remove:$to_remove"
+  echo ""
+  
+  # Generate cleanup commands
+  local cleanup_cmds=$(generate_cleanup_commands "$to_remove")
+  
+  # Show dry-run
+  echo "Cleanup commands (dry-run):"
+  echo "$cleanup_cmds"
+  echo ""
+  
+  if gum confirm "Execute cleanup?"; then
+    # Execute cleanup
+    for plugin in $to_remove; do
+      rm -rf "$HOME/.config/opencode/node_modules/$plugin"
+      rm -rf "$HOME/.config/opencode/plugin/$plugin"
+    done
+    
+    echo "✅ Cleanup complete!"
+    
+    # Launch OpenCode to update Nix config
+    if gum confirm "Launch local OpenCode to update Nix config?"; then
+      cat > /tmp/ocx-sync-prompt.md << EOF
+# OCX Plugin Sync
+
+The following plugins were removed:
+$to_remove
+
+Please edit $FLAKE_PATH/systems/nebulanix/users.nix to remove these plugins from the npmPlugins or plugins lists.
+EOF
+      cd "$FLAKE_PATH"
+      OPENCODE_CONFIG_DIR="$HOME/.config/opencode" \
+        opencode --local /tmp/ocx-sync-prompt.md
+      
+      # Provision and commit
+      echo "Run: just provision nebulanix"
+    fi
+  else
+    echo "Cleanup cancelled."
+  fi
+}
+
+# Dry-run mode
+run_dry_run() {
+  activate_mise
+  
+  echo "=== OCX Cleanup Dry Run ==="
+  echo ""
+  
+  local installed=$(get_installed_plugins)
+  local expected=$(get_expected_plugins)
+  
+  echo "Installed plugins:"
+  echo "$installed" | sed 's/^/  - /'
+  echo ""
+  
+  echo "Expected plugins (from Nix):"
+  echo "$expected" | sed 's/^/  - /'
+  echo ""
+  
+  local orphans=$(find_orphans "$installed" "$expected")
+  
+  if [ -z "$orphans" ]; then
+    echo "✅ No orphaned plugins. In sync!"
+  else
+    echo "Orphaned plugins (not in Nix config):"
+    echo "$orphans" | sed 's/^/  - /'
+    echo ""
+    echo "Cleanup commands:"
+    generate_cleanup_commands "$orphans" | sed 's/^/  /'
+  fi
+}
+
+# Menu mode
+run_menu() {
+  echo "╔══════════════════════════════════════╗"
+  echo "║       OCX Plugin Cleanup Tool       ║"
+  echo "╠══════════════════════════════════════╣"
+  echo "║  1. Check for orphaned plugins     ║"
+  echo "║  2. Sync with gum selection        ║"
+  echo "║  3. Dry-run (show what would happen)║"
+  echo "║  4. Exit                           ║"
+  echo "╚══════════════════════════════════════╝"
+  
+  local choice=$(gum choose "Check for orphaned plugins" "Sync with gum selection" "Dry-run" "Exit")
+  
+  case "$choice" in
+    "Check for orphaned plugins")
+      run_auto_mode
+      ;;
+    "Sync with gum selection")
+      run_sync_mode
+      ;;
+    "Dry-run")
+      run_dry_run
+      ;;
+    "Exit"|"")
+      echo "Exited."
+      exit 0
+      ;;
+  esac
+}
+
+# Main
+case "$MODE" in
+  auto)
+    run_auto_mode
+    ;;
+  sync)
+    run_sync_mode
+    ;;
+  dry-run)
+    run_dry_run
+    ;;
+  menu)
+    run_menu
+    ;;
+esac

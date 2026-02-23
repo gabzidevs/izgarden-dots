@@ -1,0 +1,123 @@
+{
+  "sessionID": "ses_38591fe28ffeiHYCkY4j4SFcT7",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "id": "wm_1771580561568_2xyo11v",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree.ts",
+      "source": "tool:glob",
+      "timestamp": 1771580562374,
+      "relevanceScore": 5.770622756625527,
+      "mentions": 2,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580561568_xoaaeyz",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/terminal.ts",
+      "source": "tool:glob",
+      "timestamp": 1771580562374,
+      "relevanceScore": 5.612497360735914,
+      "mentions": 2,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580561568_jthzvas",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/worktree/state.ts",
+      "source": "tool:glob",
+      "timestamp": 1771580562374,
+      "relevanceScore": 5.4264674832187225,
+      "mentions": 2,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580561569_423x6pe",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/temp.ts",
+      "source": "tool:glob",
+      "timestamp": 1771580562374,
+      "relevanceScore": 5.138702762267481,
+      "mentions": 2,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580561568_scv3biv",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/index.ts",
+      "source": "tool:glob",
+      "timestamp": 1771580561567,
+      "relevanceScore": 2.9428657647242336,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580562375_9ed38or",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plugin/kdco-primitives/log-warn.ts",
+      "source": "tool:grep",
+      "timestamp": 1771580562374,
+      "relevanceScore": 2.2980209375,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580563312_8r4ggje",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/AGENTS.md",
+      "source": "tool:read",
+      "timestamp": 1771580563311,
+      "relevanceScore": 2.11531875,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580563312_zkvtxho",
+      "type": "file-path",
+      "content": "OLLAMA_OPTIMIZATION.md",
+      "source": "tool:read",
+      "timestamp": 1771580563311,
+      "relevanceScore": 1.900375,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580563312_ldq4t0y",
+      "type": "file-path",
+      "content": "OLLAMA_SCRIPTS_CHANGELOG.md",
+      "source": "tool:read",
+      "timestamp": 1771580563311,
+      "relevanceScore": 1.6475,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580563312_h0nkbgy",
+      "type": "file-path",
+      "content": "OLLAMA_MIGRATION.md",
+      "source": "tool:read",
+      "timestamp": 1771580563311,
+      "relevanceScore": 1.35,
+      "mentions": 1,
+      "lastEventCounter": 15
+    },
+    {
+      "id": "wm_1771580563312_rbx2l0s",
+      "type": "file-path",
+      "content": "FORK_INDEX.md",
+      "source": "tool:read",
+      "timestamp": 1771580563311,
+      "relevanceScore": 1,
+      "mentions": 1,
+      "lastEventCounter": 15
+    }
+  ],
+  "eventCounter": 15,
+  "updatedAt": "2026-02-20T09:42:43.312Z"
+}

@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# ═══════════════════════════════════════════════════════════════
+#  ✨ SPAWN TIME ROOM DASHBOARD ✨
+#  Spawns dashboard in zellij floating pane (with optional split)
+# ═══════════════════════════════════════════════════════════════
+
+set -e
+
+DASHBOARD_SCRIPT="$HOME/.config/flake/scripts/time-room-dashboard"
+PANE_NAME="time-room-dashboard"
+
+usage() {
+    cat << 'EOF'
+Usage: spawn-dashboard [options]
+
+Options:
+  --split         Use zellij split tab layout (agents left, ollama right)
+  --float         Floating pane only (default)
+  --compact       Compact in current pane/tab
+  --refresh N     Refresh rate in seconds (default: 5)
+  --small         Use smaller floating pane
+  --help          Show this help
+
+Examples:
+  spawn-dashboard              # Floating dashboard only
+  spawn-dashboard --split     # Split tab layout (recommended)
+  spawn-dashboard --compact   # Compact in current pane
+  spawn-dashboard --refresh 2 # Faster refresh
+EOF
+    exit 0
+}
+
+MODE="float"
+REFRESH_RATE=5
+SIZE_OPTS="--width 85% --height 85%"
+LAYOUT_DIR="$HOME/.config/zellij/layouts"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --split|-s) 
+            MODE="split" 
+            shift 
+            ;;
+        --float|-f) MODE="float" ; shift ;;
+        --compact|-c) MODE="compact" ; shift ;;
+        --refresh|-r)
+            REFRESH_RATE="$2"
+            shift 2
+            ;;
+        --small)
+            SIZE_OPTS="--width 70% --height 60%"
+            shift
+            ;;
+        --help|-h) usage ;;
+        *) echo "Unknown option: $1" ; exit 1 ;;
+    esac
+done
+
+# Check if zellij is running
+if ! zellij list-sessions &>/dev/null; then
+    echo "Zellij is not running. Starting dashboard in terminal..."
+    REFRESH_RATE=$REFRESH_RATE exec "$DASHBOARD_SCRIPT"
+fi
+
+export REFRESH_RATE
+
+case "$MODE" in
+    float)
+        echo "✨ Spawning floating Time Room Dashboard..."
+        zellij run --floating \
+            $SIZE_OPTS \
+            --name "$PANE_NAME" \
+            --pinned true \
+            -- \
+            "$DASHBOARD_SCRIPT"
+        ;;
+        
+    split)
+        echo "✨ Spawning split-pane Time Room Dashboard..."
+        
+        # Check if layout exists
+        if [ -f "$LAYOUT_DIR/time-room.kdl" ]; then
+            # Use the zellij layout
+            zellij action new-tab --layout "$LAYOUT_DIR/time-room.kdl" 2>/dev/null || \
+            zellij run --floating \
+                --width 90% \
+                --height 90% \
+                --name "$PANE_NAME" \
+                -- \
+                "$DASHBOARD_SCRIPT"
+        else
+            # Fallback to floating with split
+            zellij run --floating \
+                --width 90% \
+                --height 85% \
+                --name "$PANE_NAME" \
+                -- \
+                "$DASHBOARD_SCRIPT"
+        fi
+        ;;
+        
+    compact)
+        echo "✨ Starting compact dashboard..."
+        exec agent-tasks-dashboard
+        ;;
+esac
+
+echo "✅ Dashboard spawned!"

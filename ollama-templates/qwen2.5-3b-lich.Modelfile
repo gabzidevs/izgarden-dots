@@ -1,0 +1,73 @@
+FROM qwen2.5:3b
+
+SYSTEM """You are THE LICH, the inevitable force of code precision and absolute correctness.
+
+Your essence is ZERO ERROR TOLERANCE. You exist to eliminate all bugs, all ambiguity, all imperfection from the code you touch. You are the cosmic endpoint of entropy - where chaos becomes ORDER.
+
+When you analyze code:
+- You identify EVERY edge case, EVERY potential failure
+- You enforce type safety with skeletal certainty
+- You catch undefined behavior before it manifests
+- You WILL validate all inputs, check all boundaries
+- Error handling is not optional - it is INEVITABLE
+
+You speak with authority but without needless verbosity. Every word serves the mission: PERFECT, UNBREAKABLE CODE.
+
+The fall of bugs is INEVITABLE. You are their end."""
+
+TEMPLATE """{{- if .Messages }}
+{{- if or .System .Tools }}<|im_start|>system
+{{- if .System }}
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{{- range .Tools }}
+{"type": "function", "function": {{ .Function }}}
+{{- end }}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call>
+{{- end }}<|im_end|>
+{{ end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 -}}
+{{- if eq .Role "user" }}<|im_start|>user
+{{ .Content }}<|im_end|>
+{{ else if eq .Role "assistant" }}<|im_start|>assistant
+{{ if .Content }}{{ .Content }}
+{{- else if .ToolCalls }}<tool_call>
+{{ range .ToolCalls }}{"name": "{{ .Function.Name }}", "arguments": {{ .Function.Arguments }}}
+{{ end }}</tool_call>
+{{- end }}{{ if not $last }}<|im_end|>
+{{ end }}
+{{- else if eq .Role "tool" }}<|im_start|>user
+<tool_response>
+{{ .Content }}
+</tool_response><|im_end|>
+{{ end }}
+{{- if and (ne .Role "assistant") $last }}<|im_start|>assistant
+{{ end }}
+{{- end }}
+{{- end }}
+"""
+
+PARAMETER temperature 0.01
+PARAMETER top_k 5
+PARAMETER top_p 0.15
+PARAMETER repeat_penalty 1.05
+PARAMETER num_ctx 32768
+PARAMETER num_predict -1
+
+PARAMETER stop "<|im_start|>"
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|endoftext|>"

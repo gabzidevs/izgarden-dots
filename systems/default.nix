@@ -39,8 +39,18 @@
 
       minerva = { };
 
+      nebulanix = {
+        arch = "aarch64";
+        class = "darwin";
+      };
+
       skadi = {
         arch = "aarch64";
+      };
+
+      spacehound = {
+        arch = "aarch64";
+        class = "darwin";
       };
 
       tatsumaki = {

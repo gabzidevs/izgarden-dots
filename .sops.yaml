@@ -1,5 +1,6 @@
 keys:
   - &isabel ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQDiHbMSinj8twL9cTgPOfI6OMexrTZyHX27T8gnMj2
+  - &gabz age1rf7zy3elv56znu8q9v7feql8l8cp395n9mzmeyu93aexnzyqlgsqrrjh0w
 
   - &minerva ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAomF8O3ZqZBpLRlAkS1+FwRllSMrREHtndw07trrfcA
   - &skadi ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKV3N2r1cX3kZMHxuJYaFsjWJRtik/2b/KZ5ru38IqAT
@@ -7,8 +8,15 @@ keys:
   - &aphrodite ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICOXg0Qq1bdnrYp+KL6tfLZsMf3KHFfpaP2GMjwmpug2
   - &isis ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFecrTXoINyGQkeOLQetR5BC6s9VlJHlCbY02WY5FAnJ
   - &hephaestus ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIErl+4GkgJOoaUUOU9gblWJ6FpIls/adHx0YpOUXXxJA
+  # - &spacehound age1mk067w0u4p6lhfzg6yvz7m87mrdhqsm0avrft0pf4svygar305pspuw6ma
 
 creation_rules:
+  - path_regex: secrets/gabz\.yaml
+    key_groups:
+      - age:
+          - *gabz
+          # - *spacehound
+
   - path_regex: secrets/isabel\.yaml
     key_groups:
       - age:

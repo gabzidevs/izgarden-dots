@@ -1,0 +1,429 @@
+#!/usr/bin/env bash
+
+# ═══════════════════════════════════════════════════════════════
+#  ✨ PRISMO'S TIME ROOM DASHBOARD v2.0 ✨
+#  Cosmic but cozy - powered by gum!
+# ═══════════════════════════════════════════════════════════════
+
+TIME_ROOM="${TIME_ROOM:-$HOME/.config/flake/.opencode/time-room}"
+SERVER_STATUS_FILE="$HOME/.local/state/ollama-server-status"
+ACTIVITY_DIR="$TIME_ROOM/agents/.activity"
+SESSION_NOTES_DIR="$HOME/.config/flake/.opencode"
+REFRESH_RATE="${REFRESH_RATE:-5}"
+REMOTE_HOST="nebulanix.local:11434"
+
+# Theme colors (Charmbracelet palette)
+C_PRIMARY="212"     # Hot pink - Prismo's realm
+C_SECONDARY="99"    # Purple - Nightosphere
+C_ACCENT="228"      # Yellow - Finn's hat
+C_SUCCESS="40"      # Green - Treehouse
+C_ERROR="196"       # Red - Fire Kingdom
+C_DIM="240"         # Gray - Ice King
+
+# ─────────────────────────────────────────────────────────────────
+# Zellij-safe rendering (smooth refresh)
+# ─────────────────────────────────────────────────────────────────
+
+zellij_safe_clear() {
+    # Move cursor to top-left instead of clearing (smoother)
+    printf '\033[?2027h'  # Enter synchronized update mode
+    tput cup 0 0 2>/dev/null || printf '\033[H'
+    tput ed 2>/dev/null  # Clear to end of screen
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Agent functions
+# ─────────────────────────────────────────────────────────────────
+
+get_agent_role() {
+    local agent_file="$1"
+    # Look for **Role:** in the file
+    grep -m1 "^\*\*Role:\*\*" "$agent_file" 2>/dev/null | \
+        sed 's/\*\*Role:\*\* //' | \
+        cut -d'-' -f1 | \
+        xargs | \
+        cut -c1-30
+}
+
+get_agent_sleep_emoji() {
+    local agent_file="$1"
+    grep -m1 "^\*\*Sleep emoji:\*\*" "$agent_file" 2>/dev/null | \
+        sed 's/\*\*Sleep emoji:\*\* //' | xargs
+}
+
+get_agents() {
+    local agents_dir="$TIME_ROOM/agents"
+    [ -d "$agents_dir" ] || { echo ""; return; }
+    
+    for agent_file in "$agents_dir"/*.md; do
+        [ -f "$agent_file" ] || continue
+        local name role agent_state sleep_emoji
+        name=$(basename "$agent_file" .md)
+        
+        # Skip non-agent files
+        case "$name" in
+            AGENTS|README|*.bak) continue ;;
+        esac
+        
+        # Get role from agent file (first line after **Role:**)
+        role=$(grep -m1 "^\*\*Role:\*\*" "$agent_file" 2>/dev/null | \
+               sed 's/\*\*Role:\*\* //' | \
+               cut -d'-' -f1 | xargs | cut -c1-25)
+        [ -z "$role" ] && role="Agent"
+        
+        # Get sleep emoji if agent can sleep
+        sleep_emoji=$(get_agent_sleep_emoji "$agent_file")
+        
+        # Determine agent state from activity file
+        local activity_file="$ACTIVITY_DIR/${name}.ts"
+        if [ -f "$activity_file" ]; then
+            local ts now diff
+            ts=$(cat "$activity_file" 2>/dev/null)
+            now=$(date +%s)
+            diff=$((now - ts))
+            
+            if [ "$diff" -lt 300 ]; then
+                agent_state="active"
+            elif [ "$diff" -lt 3600 ]; then
+                agent_state="recent"
+            elif [ -n "$sleep_emoji" ]; then
+                agent_state="sleeping"
+            else
+                agent_state="idle"
+            fi
+        elif [ -n "$sleep_emoji" ]; then
+            agent_state="sleeping"
+        else
+            agent_state="idle"
+        fi
+        
+        echo "$name:$role:$agent_state:$sleep_emoji"
+    done
+}
+
+update_agent_activity() {
+    local agent_name="$1"
+    mkdir -p "$ACTIVITY_DIR"
+    date +%s > "$ACTIVITY_DIR/${agent_name}.ts"
+}
+
+render_agent_card() {
+    local name="$1"
+    local role="$2"
+    local agent_state="$3"
+    local sleep_emoji="${4:-}"
+    
+    local icon color
+    case "$agent_state" in
+        active)   icon="●" ; color="$C_SUCCESS" ;;
+        recent)   icon="◐" ; color="$C_ACCENT" ;;
+        sleeping) icon="${sleep_emoji:-😴}" ; color="$C_DIM" ;;
+        *)        icon="○" ; color="$C_DIM" ;;
+    esac
+    
+    # Capitalize first letter
+    name=$(echo "$name" | sed 's/./\u&/')
+    
+    printf "  %s \033[38;5;%sm%-12s\033[0m %s\n" "$icon" "$color" "$name" "$role"
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Status functions  
+# ─────────────────────────────────────────────────────────────────
+
+get_ollama_status() {
+    if pgrep -f "ollama serve" &>/dev/null; then
+        if curl -s --max-time 2 http://localhost:11434/api/tags &>/dev/null; then
+            echo "RUNNING"
+        else
+            echo "STARTING"
+        fi
+    else
+        echo "STOPPED"
+    fi
+}
+
+get_active_model() {
+    local model
+    model=$(curl -s --max-time 2 http://localhost:11434/api/ps 2>/dev/null | jq -r '.models[0].name // "none"' 2>/dev/null)
+    echo "${model:-none}"
+}
+
+get_remote_status() {
+    if curl -s --max-time 2 "http://${REMOTE_HOST}/api/tags" &>/dev/null; then
+        echo "Connected"
+    else
+        echo "Offline"
+    fi
+}
+
+get_hostname() {
+    hostname -s 2>/dev/null || echo "unknown"
+}
+
+is_nebulanix() { [[ "$(get_hostname)" == "nebulanix" ]]; }
+is_spacehound() { [[ "$(get_hostname)" == "spacehound" ]]; }
+
+# ─────────────────────────────────────────────────────────────────
+# Session Notes (Cross-session persistence)
+# ─────────────────────────────────────────────────────────────────
+
+get_latest_session_notes() {
+    local notes_file=""
+    
+    # Check for SESSION_SUMMARY.md first (overview)
+    if [ -f "$SESSION_NOTES_DIR/SESSION_SUMMARY.md" ]; then
+        notes_file="$SESSION_NOTES_DIR/SESSION_SUMMARY.md"
+    else
+        # Find most recent SESSION_NOTES_*.md
+        notes_file=$(ls -t "$SESSION_NOTES_DIR"/SESSION_NOTES_*.md 2>/dev/null | head -1)
+    fi
+    
+    if [ -n "$notes_file" ] && [ -f "$notes_file" ]; then
+        # Get last 8 non-empty lines, strip markdown headers
+        tail -n +3 "$notes_file" 2>/dev/null | \
+            grep -v '^$' | \
+            head -8 | \
+            sed 's/^#* *//' | \
+            sed 's/\*\*/"/g' | \
+            cut -c1-50
+    fi
+}
+
+render_session_notes() {
+    local notes
+    notes=$(get_latest_session_notes)
+    
+    [ -z "$notes" ] && return
+    
+    echo ""
+    gum style \
+        --border normal \
+        --border-foreground "$C_ACCENT" \
+        --padding "0 1" \
+        --width 40 \
+        "📝 SESSION NOTES"
+    
+    echo "$notes" | while read -r line; do
+        [ -n "$line" ] && gum style --foreground "$C_DIM" "  $line"
+    done
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Server status (LLM activation)
+# ─────────────────────────────────────────────────────────────────
+
+get_server_status() {
+    [ -f "$SERVER_STATUS_FILE" ] && cat "$SERVER_STATUS_FILE"
+}
+
+render_server_progress() {
+    local status
+    status=$(get_server_status)
+    [ -z "$status" ] && return
+    
+    local phase progress message host model
+    phase=$(echo "$status" | grep "^PHASE=" | cut -d= -f2)
+    progress=$(echo "$status" | grep "^PROGRESS=" | cut -d= -f2)
+    message=$(echo "$status" | grep "^MESSAGE=" | cut -d= -f2)
+    host=$(echo "$status" | grep "^HOST=" | cut -d= -f2)
+    model=$(echo "$status" | grep "^MODEL=" | cut -d= -f2)
+    
+    # Progress bar
+    local bar_width=20
+    local filled=$((progress * bar_width / 100))
+    local empty=$((bar_width - filled))
+    local bar=$(printf '█%.0s' $(seq 1 $filled 2>/dev/null))$(printf '░%.0s' $(seq 1 $empty 2>/dev/null))
+    
+    echo ""
+    
+    # Highlight action phases (6 = reconnect - this is the "migration" phase)
+    if [[ "$phase" == "reconnect" ]]; then
+        gum style \
+            --border thick \
+            --border-foreground "$C_ACCENT" \
+            --padding "1 2" \
+            --width 56 \
+            "⚡ ACTION REQUIRED ⚡" \
+            "" \
+            "Phase: $phase (Migration)" \
+            "Message: $message" \
+            "Model: ${model:-unknown}" \
+            "" \
+            "Progress: [$bar] $progress%" \
+            "" \
+            "$(gum style --foreground "$C_ACCENT" --bold '>>> Run: mise x opencode@latest -- opencode <<<')"
+    else
+        gum style \
+            --border rounded \
+            --border-foreground "$C_SECONDARY" \
+            --padding "1 2" \
+            --width 56 \
+            "🔥 Activation: $phase" \
+            "" \
+            "Message: $message" \
+            "Progress: [$bar] $progress%"
+    fi
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Main render
+# ─────────────────────────────────────────────────────────────────
+
+render_dashboard() {
+    zellij_safe_clear
+    
+    local hostname
+    hostname=$(get_hostname)
+    
+    local role_indicator=""
+    is_nebulanix && role_indicator=" [SERVER]"
+    is_spacehound && role_indicator=" [CLIENT]"
+    
+    # Header
+    gum style \
+        --foreground "$C_PRIMARY" \
+        --bold \
+        --align center \
+        --width 60 \
+        "✨ PRISMO'S TIME ROOM ✨$role_indicator"
+    
+    echo ""
+    gum style --foreground "$C_DIM" "  📅 $(date '+%Y-%m-%d %H:%M:%S')"
+    echo ""
+    
+    # Ollama Status
+    local ollama_status remote_status active_model
+    ollama_status=$(get_ollama_status)
+    remote_status=$(get_remote_status)
+    active_model=$(get_active_model)
+    
+    local status_color
+    case "$ollama_status" in
+        RUNNING)  status_color="$C_SUCCESS" ;;
+        STARTING) status_color="$C_ACCENT" ;;
+        STOPPED)  status_color="$C_ERROR" ;;
+        *)        status_color="$C_DIM" ;;
+    esac
+    
+    if is_nebulanix; then
+        gum style \
+            --border double \
+            --border-foreground "$C_SECONDARY" \
+            --padding "1 2" \
+            --width 58 \
+            "📺 THE TV - Ollama (Server Mode)" \
+            "" \
+            "Status: $(gum style --foreground "$status_color" "● $ollama_status")" \
+            "Model: $active_model"
+    elif is_spacehound; then
+        local remote_color
+        [ "$remote_status" = "Connected" ] && remote_color="$C_SUCCESS" || remote_color="$C_ERROR"
+        
+        gum style \
+            --border double \
+            --border-foreground "$C_SECONDARY" \
+            --padding "1 2" \
+            --width 58 \
+            "📺 THE TV - Ollama (Client Mode)" \
+            "" \
+            "Remote: $(gum style --foreground "$remote_color" "$remote_status")" \
+            "Local:  $(gum style --foreground "$status_color" "$ollama_status")" \
+            "Model: $active_model"
+    else
+        gum style \
+            --border double \
+            --border-foreground "$C_SECONDARY" \
+            --padding "1 2" \
+            --width 58 \
+            "📺 THE TV - Ollama" \
+            "" \
+            "Status: $(gum style --foreground "$status_color" "● $ollama_status")" \
+            "Model: $active_model"
+    fi
+    
+    # Server status (if active)
+    if [ -f "$SERVER_STATUS_FILE" ]; then
+        render_server_progress
+    fi
+    
+    # Session notes (cross-session persistence)
+    render_session_notes
+    
+    # System info
+    local cpu_mem
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        cpu_mem=$(ps -A -o %cpu,%mem | awk '{cpu+=$1; mem+=$2} END {printf "%.0f%% / %.0f%%", cpu, mem}')
+    else
+        cpu_mem="N/A"
+    fi
+    
+    echo ""
+    gum style --foreground "$C_DIM" "  🖥️  $hostname | CPU/MEM: $cpu_mem"
+    
+    # Agent roster
+    echo ""
+    gum style \
+        --border normal \
+        --border-foreground "$C_PRIMARY" \
+        --padding "0 1" \
+        --width 40 \
+        "🎭 AGENT ROSTER"
+    
+    local agents
+    agents=$(get_agents)
+    if [ -n "$agents" ]; then
+        while IFS=: read -r name role agent_state sleep_emoji; do
+            [ -n "$name" ] && render_agent_card "$name" "$role" "$agent_state" "$sleep_emoji"
+        done <<< "$agents"
+    else
+        gum style --foreground "$C_DIM" "  (no agents found)"
+    fi
+    
+    # Active plans
+    local plans_count
+    plans_count=$(ls -1 "$TIME_ROOM/../plans"/*.md 2>/dev/null | wc -l | tr -d ' ')
+    
+    echo ""
+    gum style \
+        --border normal \
+        --border-foreground "$C_DIM" \
+        --padding "0 1" \
+        --width 30 \
+        "📋 $plans_count Active Plans"
+    
+    # Quick actions
+    echo ""
+    gum style \
+        --foreground "$C_DIM" \
+        "  ⚡ ollamactl status | ollama-optimize | connect-ollama"
+    
+    # Footer
+    echo ""
+    gum style \
+        --foreground "$C_DIM" \
+        --align center \
+        "Refresh: ${REFRESH_RATE}s | Ctrl+C to exit"
+    
+    gum style \
+        --foreground "$C_PRIMARY" \
+        --align center \
+        "✨ Have a cosmic time! ✨"
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Main loop
+# ─────────────────────────────────────────────────────────────────
+
+main() {
+    trap 'zellij_safe_clear; echo ""; echo "Dashboard closed. Farewell, friend!"; exit 0' INT TERM
+    
+    gum spin --title "Summoning Prismo..." -- sleep 1
+    
+    while true; do
+        render_dashboard
+        sleep "$REFRESH_RATE"
+    done
+}
+
+main "$@"

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# opencode-clear-cache - Clear OpenCode plugin cache to force reinstall
+#
+# Usage:
+#   opencode-clear-cache        # Clear cache and show status
+#   opencode-clear-cache --help # Show this help
+
+set -euo pipefail
+
+CACHE_DIR="${HOME}/.cache/opencode"
+NODE_MODULES="${CACHE_DIR}/node_modules"
+
+show_help() {
+    cat << EOF
+opencode-clear-cache - Clear OpenCode plugin cache
+
+Usage:
+    opencode-clear-cache        Clear cache and show status
+    opencode-clear-cache --help Show this help
+
+Description:
+    OpenCode caches npm plugins in ~/.cache/opencode/node_modules/
+    To force reinstall of plugins (after adding new ones), clear this cache.
+
+    After clearing, restart OpenCode and it will reinstall plugins automatically.
+
+Examples:
+    opencode-clear-cache
+
+See also:
+    https://opencode.ai/docs/plugins/
+EOF
+}
+
+main() {
+    if [[ "${1:-}" == "--help" ]]; then
+        show_help
+        exit 0
+    fi
+
+    echo "🧹 Clearing OpenCode plugin cache..."
+
+    if [[ -d "$NODE_MODULES" ]]; then
+        echo "   Removing: $NODE_MODULES"
+        rm -rf "$NODE_MODULES"
+        echo "✅ Cache cleared!"
+    else
+        echo "ℹ️  No cache found at $NODE_MODULES"
+    fi
+
+    echo ""
+    echo "📦 Next steps:"
+    echo "   1. Restart OpenCode"
+    echo "   2. Plugins will be reinstalled automatically"
+}
+
+main "$@"

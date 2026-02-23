@@ -1,0 +1,233 @@
+{
+  "sessionID": "ses_385cee50affey5c9gbQAMc3SV2",
+  "slots": {
+    "error": [],
+    "decision": [],
+    "todo": [],
+    "dependency": []
+  },
+  "pool": [
+    {
+      "id": "wm_1771576741289_cepplvr",
+      "type": "file-path",
+      "content": "//opencode.ai/config.js",
+      "source": "tool:read",
+      "timestamp": 1771627414108,
+      "relevanceScore": 54.86554341653555,
+      "mentions": 18,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771592905498_smv004q",
+      "type": "file-path",
+      "content": "opencode.js",
+      "source": "tool:read",
+      "timestamp": 1771630042780,
+      "relevanceScore": 48.72941990477508,
+      "mentions": 16,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771576571837_clhgbqw",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/plans/PLAN_PLUGIN_TESTING.md",
+      "source": "tool:read",
+      "timestamp": 1771614393043,
+      "relevanceScore": 39.63033729483171,
+      "mentions": 13,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771592905499_cd6ahro",
+      "type": "file-path",
+      "content": "opencode/opencode.js",
+      "source": "tool:read",
+      "timestamp": 1771628289618,
+      "relevanceScore": 36.56361026965614,
+      "mentions": 12,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771594402992_3rwlgzo",
+      "type": "file-path",
+      "content": "Node.js",
+      "source": "tool:read",
+      "timestamp": 1771625571076,
+      "relevanceScore": 12.19361495125055,
+      "mentions": 4,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771594476756_y8bzkpg",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/prismo.md",
+      "source": "tool:read",
+      "timestamp": 1771633138557,
+      "relevanceScore": 11.410205502728111,
+      "mentions": 4,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771594476756_0vrubcg",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/opencode/opencode.js",
+      "source": "tool:read",
+      "timestamp": 1771595735140,
+      "relevanceScore": 9.145462463668084,
+      "mentions": 3,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771594476756_s8l3qja",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/fern.md",
+      "source": "tool:read",
+      "timestamp": 1771595735140,
+      "relevanceScore": 9.145462463664039,
+      "mentions": 3,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771625259417_qbd8hr4",
+      "type": "file-path",
+      "content": "providers.go",
+      "source": "tool:read",
+      "timestamp": 1771627332721,
+      "relevanceScore": 9.142571287887453,
+      "mentions": 3,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771595709815_w4kpe9k",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/finn.md",
+      "source": "tool:read",
+      "timestamp": 1771595735140,
+      "relevanceScore": 6.0969749757722065,
+      "mentions": 2,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771624585906_eyyshjw",
+      "type": "file-path",
+      "content": "/.config/opencode/opencode.js",
+      "source": "tool:read",
+      "timestamp": 1771627419142,
+      "relevanceScore": 6.091685015069964,
+      "mentions": 2,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771624554852_6rtf0eu",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/scripts/README.md",
+      "source": "tool:grep",
+      "timestamp": 1771628346074,
+      "relevanceScore": 6.081970993132168,
+      "mentions": 2,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771631483025_bzw4ceg",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/package-lock.json",
+      "source": "tool:grep",
+      "timestamp": 1771631483024,
+      "relevanceScore": 3.0512205150132585,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633138557_qwt78fb",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/simon.md",
+      "source": "tool:glob",
+      "timestamp": 1771633138557,
+      "relevanceScore": 2.7928937920058594,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633138557_wi23fjw",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/jake.md",
+      "source": "tool:glob",
+      "timestamp": 1771633138557,
+      "relevanceScore": 2.6975221082421874,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633138558_mfkoi0j",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/marceline.md",
+      "source": "tool:glob",
+      "timestamp": 1771633138557,
+      "relevanceScore": 2.58532012734375,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633138558_cretz7n",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/finn-shelby.md",
+      "source": "tool:glob",
+      "timestamp": 1771633138557,
+      "relevanceScore": 2.2980209375,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633143195_4b2t28z",
+      "type": "file-path",
+      "content": "/Users/gabz/.config/flake/.opencode/time-room/agents/AGENTS.md",
+      "source": "tool:read",
+      "timestamp": 1771633143195,
+      "relevanceScore": 2.11531875,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633143195_z5kzv9p",
+      "type": "file-path",
+      "content": "enchiridion/BORROWERS_LOG.md",
+      "source": "tool:read",
+      "timestamp": 1771633143195,
+      "relevanceScore": 1.900375,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633143195_0tuvt8r",
+      "type": "file-path",
+      "content": "../../enchiridion/BORROWERS_LOG.md",
+      "source": "tool:read",
+      "timestamp": 1771633143195,
+      "relevanceScore": 1.6475,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633143196_ds56bbv",
+      "type": "file-path",
+      "content": "prismo.md",
+      "source": "tool:read",
+      "timestamp": 1771633143195,
+      "relevanceScore": 1.35,
+      "mentions": 1,
+      "lastEventCounter": 308
+    },
+    {
+      "id": "wm_1771633143196_a9lwuo6",
+      "type": "file-path",
+      "content": "marceline.md",
+      "source": "tool:read",
+      "timestamp": 1771633143195,
+      "relevanceScore": 1,
+      "mentions": 1,
+      "lastEventCounter": 308
+    }
+  ],
+  "eventCounter": 308,
+  "updatedAt": "2026-02-21T00:19:03.196Z"
+}

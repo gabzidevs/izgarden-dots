@@ -2,8 +2,47 @@
   pkgs,
   inputs,
   config,
+  self,
+  lib,
   ...
 }:
+let
+
+  qh = self.lib.anyHome config;
+
+  systemWorkFocus = config.garden.profiles.work.focus or false;
+  systemRecreationalFocus = config.garden.profiles.recreational.focus or false;
+
+  shouldInstallWorkApps = systemWorkFocus || (qh (c: c.garden.profiles.work.enable or false));
+  shouldInstallGamingApps =
+    systemRecreationalFocus || (qh (c: c.garden.profiles.recreational.enable or false));
+
+  workApps = [
+    "gather"
+    "slack"
+    "tuple"
+    "loom"
+    "linear-linear"
+    "mongodb-compass"
+    "warp"
+    "1password"
+    "beekeeper-studio"
+  ];
+
+  gamingApps = [
+    {
+      name = "steam";
+      args.require_sha = false;
+    }
+    "bluestacks"
+    "transmission"
+    "modrinth"
+  ];
+
+  mediaApps = [
+    "vlc"
+  ];
+in
 {
   imports = [
     inputs.homebrew.darwinModules.nix-homebrew
@@ -18,8 +57,8 @@
       package = pkgs.fetchFromGitHub {
         owner = "homebrew";
         repo = "brew";
-        rev = "d01011cac6d72032c75fd2cd9489909e95d9faf2"; # version 5.0.12
-        hash = "sha256-BiGPeulrDVetXP+tjxhMcGLUROZAtZIhU5m4MqawCfM=";
+        rev = "a3cd1699236316db296be914b7a3f898b7d52866"; # version 5.0.13
+        hash = "sha256-rN7SUKJHkoDf9ik1iKaRVeIW+BktlplWkMaUJpb6Jw0=";
       };
 
       # I want to force us to only use declarative taps
@@ -36,14 +75,14 @@
         "homebrew/homebrew-core" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-core";
-          rev = "4d2a2d8fc9d623505079ceafbbd737db551baa41";
-          hash = "sha256-lcXa2ypf8YpKl6zn5sJvkXKB7ENMmOEGCZK0ISYQJE0=";
+          rev = "9e4f733fb78302623b3109cc303eb8567ce353f5";
+          hash = "sha256-AfN3/aibt1JN9SuwZI2//Abs2gOGGDrJAX4Adgmm3rM=";
         };
         "homebrew/homebrew-cask" = pkgs.fetchFromGitHub {
           owner = "homebrew";
           repo = "homebrew-cask";
-          rev = "c4fea0914d393a384a2ffcf2560fcb6da51925c4";
-          hash = "sha256-RaF3hSvG5wLX7pYQ8QdNYzIakTU+MOrqlBRP4SSfqHE=";
+          rev = "f2de00d40b3f3bdffb3acddc16dd31206dd1d6fe";
+          hash = "sha256-RR6gJv0wvEMT/H/lnFUWC6OqHWzmPhs+HsMicaAjqT0=";
         };
       };
     };
@@ -78,21 +117,49 @@
       taps = builtins.attrNames config.nix-homebrew.taps;
 
       # `brew install`
-      brews = [ ];
+      # brews = [ ];
+      brews = [ "mole" ];
 
       # `brew install --cask`
+      # Universal apps (always installed)
       casks = [
         # "loungy" # app launcher, too beta to use mainstream
-        "gimp" # image editor
+        # "gimp" # image editor
         "raycast" # app launcher, and clipboard manager
         # "inkscape" # vector graphics editor
         # "intellij-idea" # IDE
         # "jordanbaird-ice@beta" # better status bar
-        "discord"
-        "ghostty"
+        # "discord"
+        # "ghostty"
         "helium-browser"
-        "jellyfin-media-player"
-      ];
+        # "jellyfin-media-player"
+      ]
+      # Extra global ones
+      ++ [
+        "arc"
+        # "deskflow"
+        "jordanbaird-ice@beta"
+        "homerow"
+        "localsend"
+        "lunar"
+        "mac-mouse-fix"
+        "orbstack"
+        "protonvpn"
+        "utm"
+      ]
+      # User-level conditional apps
+      ++ lib.optionals (qh (c: c.programs.discord.enable or false)) [
+        "discord"
+      ]
+      ++ lib.optionals (qh (c: c.programs.ghostty.enable or false)) [
+        "ghostty"
+      ]
+      # System-level conditional: Work apps (system focus OR user profile)
+      ++ lib.optionals shouldInstallWorkApps workApps
+      # System-level conditional: Gaming apps (system focus OR user profile)
+      ++ lib.optionals shouldInstallGamingApps gamingApps
+      # Media apps (streaming profile)
+      ++ lib.optionals (qh (c: c.garden.profiles.media.streaming.enable or false)) mediaApps;
     };
   };
 }
